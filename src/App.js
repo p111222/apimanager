@@ -61,11 +61,11 @@ const App = () => {
       ),
       children: [
         {
-          path: '/apidashboard',
+          path: '/admin/apidashboard',
           element: <ApiDashboard />,
         },
         {
-          path: '/apiview',
+          path: '/admin/apiview',
           element: <ApiView />,
         },
        
