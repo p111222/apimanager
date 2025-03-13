@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -6,16 +6,45 @@ import {
   Tab,
   TextField,
   IconButton,
-  Typography,
-  Paper
+  Typography
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-const BodyTab = () => {
+const BodyTab = ({ apiDetails }) => {
   const [bodyType, setBodyType] = useState("json");
-  const [jsonBody, setJsonBody] = useState("{\n  \"key\": \"value\"\n}");
+  const [jsonBody, setJsonBody] = useState("");
   const [formFields, setFormFields] = useState([{ key: "", value: "" }]);
+
+  useEffect(() => {
+    if (apiDetails) {
+      const endpoint = Object.keys(apiDetails.paths)[0];
+      const operation = apiDetails.paths[endpoint].post || apiDetails.paths[endpoint].get;
+      const requestBody = operation?.requestBody?.content || {};
+
+      // Check if JSON body exists
+      if (requestBody["application/json"]) {
+        const jsonSchema = requestBody["application/json"].schema?.properties || {};
+        const jsonObject = Object.keys(jsonSchema).reduce((obj, key) => {
+          obj[key] = jsonSchema[key].example || "";
+          return obj;
+        }, {});
+        setJsonBody(JSON.stringify(jsonObject, null, 2));
+        setBodyType("json");
+      }
+
+      // Check if form-data or url-encoded exists
+      if (requestBody["multipart/form-data"] || requestBody["application/x-www-form-urlencoded"]) {
+        const formSchema = (requestBody["multipart/form-data"] || requestBody["application/x-www-form-urlencoded"]).schema?.properties || {};
+        const formFieldsArray = Object.keys(formSchema).map((key) => ({
+          key: key,
+          value: formSchema[key].example || ""
+        }));
+        setFormFields(formFieldsArray);
+        setBodyType(requestBody["multipart/form-data"] ? "formData" : "urlEncoded");
+      }
+    }
+  }, [apiDetails]);
 
   const handleTabChange = (_, newValue) => setBodyType(newValue);
 

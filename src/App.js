@@ -8,111 +8,143 @@ import NotFound from './Pages/Error/Notfound';
 import ApiDashboard from './Pages/CommonPages/ApiDashboard';
 import ApiLayout from './Layout/ApiLayout';
 import ApiView from './Pages/CommonPages/ApiView';
-
+import ListofCategories from './Pages/CommonPages/ListofCategories';
+import UploadApi from './Pages/AdminPage/UploadApi';
+import CreateTeam from './Pages/AdminPage/CreateTeam';
+import { AuthContext } from './Context/AuthContext';
+import useAxiosPrivate from './Hooks/useAxiosPrivate.js';
 
 const App = () => {
-  // const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
+  const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchUserDetails = async () => {
-  //     try {
-  //       const response = await makeRequest.get('/auth/verify');
-  //       setUser(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching user details:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  // Fetch user details on app load or refresh
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const sessionResponse = await axiosPrivate.get('/auth/check-session');
+        console.log("sessionResponse.data.valid: " + sessionResponse.data);
+        setSessionValidity(sessionResponse.data);
 
-  //   if (!user) {
-  //     fetchUserDetails();
-  //   } else {
-  //     setLoading(false);
-  //   }
-  // }, [user, setUser]);
+        const regenerateTokenResponse = await axiosPrivate.get('/auth/regenerate-accesstoken');
+        console.log("regenerateTokenResponse.data: " + regenerateTokenResponse.data);
+        setAccessToken(regenerateTokenResponse.data);
 
-  // const ProtectedRoute = ({ children, layout: Layout }) => {
-  //   if (loading) {
-  //     return null; 
-  //   }
+        const userResponse = await axiosPrivate.get('/auth/logged-in-user');
+        console.log("userResponse.data: ", JSON.stringify(userResponse.data, null, 2));
 
-  //   if (!user) {
-  //     return <Navigate to="/login" />;
-  //   }
+        const roles = userResponse.data.roles || [];
+        setUser({
+          userId: userResponse.data.userId,
+          userName: userResponse.data.userName,
+          userEmail: userResponse.data.userEmail,
+          roles: roles,
+        });
+      } catch (error) {
+        console.log("Error fetching user details: ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   if (user.user_type === 'Admin' && Layout === AdminLayout) {
-  //     return children
-  //   } else if (user.user_type === 'Users' && Layout === UserLayout) {
-  //     return children
-  //   } else {
-  //     return <Navigate to="/login" />; // Redirect to home or handle unauthorized access
-  //   }
-  // };
+    if (!user) {
+      fetchUserDetails();
+    } else {
+      setLoading(false);
+    }
+  }, [user, setUser]);
+
+  console.log("user app.js", JSON.stringify(user, null, 2));
+
+  useEffect(() => {
+    if (sessionValidity === "invalid" && window.location.href.includes("user")) {
+      setShowModal(true);
+    } else {
+      setShowModal(false);
+    }
+  }, [sessionValidity]);
+
+  const handleLogout = () => {
+    axiosPrivate.post('/auth/logout')
+      .then(() => {
+        console.log("Logged Out");
+        window.location.href = '/login';
+      }).catch((error) => {
+        console.log("Error during logout: ", error);
+      });
+  };
+
+  // Protected route component
+  const ProtectedRoute = ({ children, layout: Layout }) => {
+    console.log("Inside ProtectedRoute");
+    console.log("User:", user);
+    console.log("Loading:", loading);
+
+    // Wait for loading to complete before rendering the route
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+
+    // Redirect to login if no user data is available
+    if (!user) {
+      console.log("No user found, redirecting to login");
+      return <Navigate to="/login" />;
+    }
+
+    const isAdmin = user?.roles?.includes("admin");
+    const isItUser = user?.roles?.includes("itUser");
+
+    // Admin role redirection
+    if (isAdmin && Layout === ApiLayout && !window.location.pathname.startsWith("/admin")) {
+      console.log("Redirecting to Admin Dashboard");
+      return <Navigate to="/admin/apidashboard" />;
+    }
+
+    // IT User role redirection
+    if (isItUser && Layout === ApiLayout && !window.location.pathname.startsWith("/user")) {
+      console.log("Redirecting to IT User Dashboard");
+      return <Navigate to="/user/apidashboard" />;
+    }
+
+    console.log("Rendering children components");
+    return children;
+  };
 
   const router = createBrowserRouter([
     {
       path: '/admin',
       element: (
-        // <ProtectedRoute layout={AdminLayout}>
-        <ApiLayout />
-        // </ProtectedRoute>
+        <ProtectedRoute layout={ApiLayout}>
+          <ApiLayout />
+        </ProtectedRoute>
       ),
       children: [
-        {
-          path: '/admin/apidashboard',
-          element: <ApiDashboard />,
-        },
-        {
-          path: '/admin/apiview',
-          element: <ApiView />,
-        },
-       
+        { path: '/admin/apidashboard', element: <ApiDashboard /> },
+        { path: '/admin/apiview', element: <ApiView /> },
+        { path: '/admin/allcategories', element: <ListofCategories /> },
+        { path: '/admin/uploadapi', element: <UploadApi /> },
+        { path: '/admin/createteam', element: <CreateTeam /> },
       ],
     },
-    // {
-    //   path: '/user',
-    //   element: (
-    //     <ProtectedRoute layout={UserLayout}>
-    //       <UserLayout />
-    //     </ProtectedRoute>
-    //   ),
-    //   children: [
-    //     {
-    //       path: '/user/dashboard',
-    //       element: <ProjectDashboard />,
-    //     },
-    //     {
-    //       path: '/user/projectdetail/:projectId',
-    //       element: <ProjectDetail />,
-    //     },
-    //     {
-    //       path: '/user/ganttchart',
-    //       element: <GanttChart />,
-    //     },
-    //     {
-    //       path: '/user/workprogress/:projectId/:type',
-    //       element: <WorkProgress />,
-    //     },
-    //   ],
-    // },
     {
-      path: '/login',
-      element: <Login />,
+      path: '/user',
+      element: (
+        <ProtectedRoute layout={ApiLayout}>
+          <ApiLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        { path: '/user/apidashboard', element: <ApiDashboard /> },
+        { path: '/user/apiview', element: <ApiView /> },
+        { path: '/user/allcategories', element: <ListofCategories /> },
+      ],
     },
-    {
-      path: '/register',
-      element: <Register />,
-    },
-    {
-      path: '/',
-      element: <LandingPage />,
-    },
-    {
-      path: '*',
-      element: <NotFound />,
-    },
+    { path: '/login', element: <Login /> },
+    { path: '/register', element: <Register /> },
+    { path: '/', element: <LandingPage /> },
+    { path: '*', element: <NotFound /> },
   ]);
 
   return (

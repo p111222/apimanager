@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { TextField, MenuItem, Select, InputLabel, FormControl, Button, Box, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { TextField, MenuItem, Select, FormControl, Button, Box, Typography } from "@mui/material";
 
-const AuthorizationTab = () => {
+const AuthorizationTab = ({ apiDetails }) => {
   const [authType, setAuthType] = useState("none");
   const [authDetails, setAuthDetails] = useState({
     apiKey: "",
@@ -10,6 +10,31 @@ const AuthorizationTab = () => {
     username: "",
     password: ""
   });
+
+  // Extracting authorization details from apiDetails
+  useEffect(() => {
+    if (apiDetails && apiDetails.components?.securitySchemes) {
+      const securitySchemes = apiDetails.components.securitySchemes;
+      const schemeName = Object.keys(securitySchemes)[0];
+      const securityScheme = securitySchemes[schemeName];
+
+      if (securityScheme.type === "apiKey") {
+        setAuthType("apiKey");
+        setAuthDetails({
+          apiKey: "",
+          apiKeyLocation: securityScheme.in || "header"
+        });
+      } else if (securityScheme.type === "http" && securityScheme.scheme === "bearer") {
+        setAuthType("bearer");
+        setAuthDetails({ token: "" });
+      } else if (securityScheme.type === "http" && securityScheme.scheme === "basic") {
+        setAuthType("basic");
+        setAuthDetails({ username: "", password: "" });
+      } else {
+        setAuthType("none");
+      }
+    }
+  }, [apiDetails]);
 
   const handleAuthChange = (event) => {
     setAuthType(event.target.value);
@@ -20,7 +45,19 @@ const AuthorizationTab = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 2, borderRadius: 2, boxShadow: "0px 4px 12px rgba(0,0,0,0.3)", backgroundColor: "#fff" }}>
+    <Box
+      sx={{
+        maxWidth: 600,
+        mx: "auto",
+        p: 2,
+        borderRadius: 2,
+        boxShadow: "0px 4px 12px rgba(0,0,0,0.3)",
+        backgroundColor: "#fff"
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 2 }} fontWeight="bold">
+        Authorization
+      </Typography>
 
       <FormControl fullWidth sx={{ mb: 3 }}>
         <Select value={authType} onChange={handleAuthChange}>
@@ -44,8 +81,11 @@ const AuthorizationTab = () => {
             sx={{ mb: 2 }}
           />
           <FormControl fullWidth>
-            {/* <InputLabel>Send API Key In</InputLabel> */}
-            <Select name="apiKeyLocation" value={authDetails.apiKeyLocation} onChange={handleInputChange}>
+            <Select
+              name="apiKeyLocation"
+              value={authDetails.apiKeyLocation}
+              onChange={handleInputChange}
+            >
               <MenuItem value="header">Header</MenuItem>
               <MenuItem value="query">Query Parameter</MenuItem>
             </Select>

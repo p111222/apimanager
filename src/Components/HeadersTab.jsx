@@ -1,11 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, IconButton, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-const HeadersTab = () => {
+const HeadersTab = ({ apiDetails }) => {
     const [headers, setHeaders] = useState([{ key: "", value: "" }]);
+
+    useEffect(() => {
+        // Extract headers from apiDetails and update the state
+        const endpoint = Object.keys(apiDetails.paths)[0];
+        const operation = apiDetails.paths[endpoint].post || apiDetails.paths[endpoint].get;
+        const extractedHeaders = operation?.parameters?.filter((param) => param.in === "header") || [];
+
+        const formattedHeaders = extractedHeaders.map((header) => ({
+            key: header.name,
+            value: header.schema?.example || "",
+        }));
+
+        setHeaders(formattedHeaders.length > 0 ? formattedHeaders : [{ key: "", value: "" }]);
+    }, [apiDetails]);
 
     const handleInputChange = (index, field, value) => {
         const newHeaders = [...headers];
