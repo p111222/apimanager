@@ -13,11 +13,12 @@ import UploadApi from './Pages/AdminPage/UploadApi';
 import CreateTeam from './Pages/AdminPage/CreateTeam';
 import { AuthContext } from './Context/AuthContext';
 import useAxiosPrivate from './Hooks/useAxiosPrivate.js';
+import ApiDetailsPage from './Pages/CommonPages/ApiDetailsPage.jsx';
 
 const App = () => {
   const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
   const axiosPrivate = useAxiosPrivate();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   // Fetch user details on app load or refresh
@@ -56,7 +57,7 @@ const App = () => {
     }
   }, [user, setUser]);
 
-  console.log("user app.js", JSON.stringify(user, null, 2));
+  // console.log("user app.js", JSON.stringify(user, null, 2));
 
   useEffect(() => {
     if (sessionValidity === "invalid" && window.location.href.includes("user")) {
@@ -66,21 +67,13 @@ const App = () => {
     }
   }, [sessionValidity]);
 
-  const handleLogout = () => {
-    axiosPrivate.post('/auth/logout')
-      .then(() => {
-        console.log("Logged Out");
-        window.location.href = '/login';
-      }).catch((error) => {
-        console.log("Error during logout: ", error);
-      });
-  };
 
+  // console.log("outsideLoading", loading);
   // Protected route component
   const ProtectedRoute = ({ children, layout: Layout }) => {
-    console.log("Inside ProtectedRoute");
-    console.log("User:", user);
-    console.log("Loading:", loading);
+    // console.log("Inside ProtectedRoute");
+    // console.log("User:", user);
+    // console.log("Loading:", loading);
 
     // Wait for loading to complete before rendering the route
     if (loading) {
@@ -108,7 +101,7 @@ const App = () => {
       return <Navigate to="/user/apidashboard" />;
     }
 
-    console.log("Rendering children components");
+    // console.log("Rendering children components");
     return children;
   };
 
@@ -125,7 +118,8 @@ const App = () => {
         { path: '/admin/apiview', element: <ApiView /> },
         { path: '/admin/allcategories', element: <ListofCategories /> },
         { path: '/admin/uploadapi', element: <UploadApi /> },
-        { path: '/admin/createteam', element: <CreateTeam /> },
+        // { path: '/admin/createteam', element: <CreateTeam /> },
+        { path: '/admin/api-details/:apiId', element: <ApiDetailsPage /> },
       ],
     },
     {
@@ -139,6 +133,7 @@ const App = () => {
         { path: '/user/apidashboard', element: <ApiDashboard /> },
         { path: '/user/apiview', element: <ApiView /> },
         { path: '/user/allcategories', element: <ListofCategories /> },
+        { path: '/user/api-details/:apiId', element: <ApiDetailsPage /> },
       ],
     },
     { path: '/login', element: <Login /> },

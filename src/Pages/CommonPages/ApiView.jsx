@@ -7,6 +7,7 @@ import HeadersTab from '../../Components/HeadersTab';
 import BodyTab from '../../Components/BodyTab';
 import AuthorizationTab from '../../Components/AuthorizationTab';
 import { useLocation } from 'react-router-dom';
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
 import axios from 'axios';
 
 const ApiView = () => {
@@ -21,16 +22,41 @@ const ApiView = () => {
     const queryParams = new URLSearchParams(location.search);
     const endpoint = queryParams.get('endpoint');
     const apiId = queryParams.get('apiId');
+    const axiosPrivate = useAxiosPrivate();
+
+    // Utility function to get the Bearer token
+    const getBearerToken = async () => {
+        try {
+          const response = await axiosPrivate.get(
+            "http://localhost:8083/token",  // Updated URL
+            null,  // No request body needed
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            }
+          );
+          console.log("Generated Bearer Token:", response.data.access_token);  // Print the token
+          return response.data.access_token;
+        } catch (error) {
+          console.error("Error fetching Bearer token:", error.response?.data || error.message);
+          throw new Error("Failed to obtain Bearer token");
+        }
+      };      
+
 
     useEffect(() => {
         const fetchApiDetails = async () => {
             try {
-                const response = await axios.post(
+
+                const token = await getBearerToken();
+
+                const response = await axiosPrivate.post(
                     `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
                     null,
                     {
                         headers: {
-                            Authorization: `Bearer 6d0b3e97-abfd-3ffb-9389-7da35f5eabc7`
+                            Authorization: `Bearer ${token}`
                         }
                     }
                 );
@@ -65,8 +91,6 @@ const ApiView = () => {
         if (apiId) fetchApiDetails();
     }, [apiId]);
 
-    // Get the error response based on the selected error code
-    // Get the API response based on the selected error code
     useEffect(() => {
         if (apiDetails) {
             const endpoint = Object.keys(apiDetails.paths)[0];
@@ -128,6 +152,7 @@ const ApiView = () => {
             })
             .catch(err => console.error("Failed to copy: ", err));
     };
+
 
     return (
         <div>

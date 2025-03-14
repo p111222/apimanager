@@ -42,18 +42,20 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
 
     const handleListItemClick = (index, path, apiId) => {
         console.log("apiId: " + apiId);
-
+    
         setSelectedIndex(index);
         handleDrawerToggle();
-
-        if (path && (path.startsWith("/admin"))) {
+    
+        // Determine the user role and set the correct path prefix
+        const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+    
+        if (path && apiId) {
+            navigate(`/${pathPrefix}/apiview?endpoint=${encodeURIComponent(path)}&apiId=${encodeURIComponent(apiId)}`);
+        } else if (path) {
             navigate(path);
         }
-        else if (path && apiId) {
-            navigate(`/admin/apiview?endpoint=${encodeURIComponent(path)}&apiId=${encodeURIComponent(apiId)}`);
-        }
     };
-
+    
 
 
     return (

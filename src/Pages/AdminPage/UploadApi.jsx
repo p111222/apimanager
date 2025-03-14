@@ -22,26 +22,27 @@ const UploadApi = () => {
 
   const handleUpload = async () => {
     if (!file) return;
-
+  
     const formData = new FormData();
     formData.append("file", file);
-
+  
     try {
-      const response = await  axiosPrivate.post("http://127.0.0.1:5000/create-apis", {
-        method: "POST",
-        body: formData,
+      const response = await axiosPrivate.post("http://127.0.0.1:5000/create-apis", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
-      if (response.ok) {
+  
+      if (response.status === 200) {
         setUploadStatus("✅ File uploaded successfully!");
       } else {
-        const errorData = await response.json();
-        setUploadStatus(`❌ Upload failed: ${errorData.message || response.statusText}`);
+        setUploadStatus(`❌ Upload failed: ${response.statusText}`);
       }
     } catch (error) {
-      setUploadStatus(`❌ Error: ${error.message}`);
+      setUploadStatus(`❌ Error: ${error.response?.data?.message || error.message}`);
     }
   };
+  
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
