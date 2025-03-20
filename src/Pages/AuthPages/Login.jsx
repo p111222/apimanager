@@ -4,6 +4,8 @@ import keycloak, { initializeKeycloak } from "./keycloak";
 import axios from "../../Axios";
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
 import { AuthContext } from "../../Context/AuthContext";
+import CircularProgress from '@mui/material/CircularProgress';
+import { Box } from "@mui/material";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,7 +51,7 @@ const Login = () => {
           userId: response.data.userId,
           userName: response.data.userName,
           userEmail: response.data.userEmail,
-          roles: roles, 
+          roles: roles,
         });
 
         // Navigate based on user role
@@ -71,7 +73,11 @@ const Login = () => {
     performLogin();
   }, [navigate, setAccessToken, setSessionValidity, setUser]);
 
-  return <div>Loading...</div>;
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  );
 };
 
 export default Login;

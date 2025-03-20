@@ -20,7 +20,7 @@ import { Menu } from '@mui/material';
 import useAxiosPrivate from '../Hooks/useAxiosPrivate';
 import { AuthContext } from '../Context/AuthContext';
 import debounce from 'lodash.debounce';
-import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
   flexGrow: 1,
@@ -55,7 +55,8 @@ const ApiLayout = () => {
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );
@@ -64,8 +65,9 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        "http://localhost:8083/token",  // Updated URL
-        null,  // No request body needed
+        // "http://localhost:8083/token",  
+        "/token",  
+        null, 
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -78,7 +80,7 @@ const ApiLayout = () => {
       console.error("Error fetching Bearer token:", error.response?.data || error.message);
       throw new Error("Failed to obtain Bearer token");
     }
-  };  
+  };
 
   // Search API Call
   const searchApis = async (query) => {
@@ -104,7 +106,8 @@ const ApiLayout = () => {
       let combinedResults = [];
       for (const field of searchFields) {
         const response = await axiosPrivate.get(
-          `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          // `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -166,7 +169,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,
@@ -199,7 +203,12 @@ const ApiLayout = () => {
     fetchApiList();
   }, [apiData]);
 
-  if (apiDataLoading) return <div>Loading...</div>;
+  if (apiDataLoading) return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <CircularProgress />
+    </Box>
+  );
+
   if (apiDataError) return <div>Error fetching data: {apiDataError.message}</div>;
   if (!apiData || !apiData.list) return <div>No Data Available</div>;
 
@@ -269,9 +278,17 @@ const ApiLayout = () => {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" noWrap component="div" className="text-orange-400 font-semibold px-3">
+              <Typography
+                variant="h6"
+                noWrap
+                component="div"
+                className="text-orange-400 font-semibold px-3"
+                onClick={() => navigate(isAdmin ? "/admin/apidashboard" : "/user/apidashboard")}
+                sx={{ cursor: "pointer" }}  // Makes it look clickable
+              >
                 Nishkaiv APIM
               </Typography>
+
             </div>
 
             <Box sx={{ position: 'relative', marginRight: 2 }}>

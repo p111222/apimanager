@@ -14,6 +14,8 @@ import CreateTeam from './Pages/AdminPage/CreateTeam';
 import { AuthContext } from './Context/AuthContext';
 import useAxiosPrivate from './Hooks/useAxiosPrivate.js';
 import ApiDetailsPage from './Pages/CommonPages/ApiDetailsPage.jsx';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Box } from '@mui/material';
 
 const App = () => {
   const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
@@ -76,9 +78,11 @@ const App = () => {
     // console.log("Loading:", loading);
 
     // Wait for loading to complete before rendering the route
-    if (loading) {
-      return <div>Loading...</div>;
-    }
+    if (loading) return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
 
     // Redirect to login if no user data is available
     if (!user) {

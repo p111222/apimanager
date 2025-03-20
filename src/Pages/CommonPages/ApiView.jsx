@@ -28,8 +28,9 @@ const ApiView = () => {
     const getBearerToken = async () => {
         try {
           const response = await axiosPrivate.get(
-            "http://localhost:8083/token",  // Updated URL
-            null,  // No request body needed
+            // "http://localhost:8083/token",  
+            "token",  
+            null, 
             {
               headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -52,7 +53,8 @@ const ApiView = () => {
                 const token = await getBearerToken();
 
                 const response = await axiosPrivate.post(
-                    `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
+                    // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
+                    `/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
                     null,
                     {
                         headers: {

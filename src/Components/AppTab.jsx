@@ -33,8 +33,9 @@ const AppTab = ({ apiDetails }) => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        "http://localhost:8083/token",  // Updated URL
-        null,  // No request body needed
+        // "http://localhost:8083/token",  
+        "/token",  
+        null,  
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -96,7 +97,8 @@ const AppTab = ({ apiDetails }) => {
       console.log("Updated Data Payload:", updatedData);
 
       const response = await axiosPrivate.put(
-        `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
+        // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
+        `/am/publisher/v4/apis/${apiId}`,
         updatedData,
         {
           headers: {
@@ -124,7 +126,8 @@ const AppTab = ({ apiDetails }) => {
   const fetchDescription = async () => {
     try {
       const fetchResponse = await axiosPrivate.get(
-        `http://localhost:8081/api/getapi/${apiId}`
+        // `http://localhost:8081/api/getapi/${apiId}`
+        `/getapi/${apiId}`
       );
 
       const initialDescription = fetchResponse.data?.description || "No description available";
