@@ -8,9 +8,8 @@ import BodyTab from '../../Components/BodyTab';
 import AuthorizationTab from '../../Components/AuthorizationTab';
 import { useLocation } from 'react-router-dom';
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
-import axios from 'axios';
 
-const ApiView = () => {
+const ApiView = ({apiId, endpoint}) => {
     const [selectedTab, setSelectedTab] = useState(0);
     const [selectedError, setSelectedError] = useState("400");
     const [copied, setCopied] = useState({ request: false, response: false, error: false });
@@ -19,31 +18,31 @@ const ApiView = () => {
     const [apiResponse, setApiResponse] = useState("");
     const [errorResponse, setErrorResponse] = useState("");
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const endpoint = queryParams.get('endpoint');
-    const apiId = queryParams.get('apiId');
+    // const queryParams = new URLSearchParams(location.search);
+    // const endpoint = queryParams.get('endpoint');
+    // const apiId = queryParams.get('apiId');
     const axiosPrivate = useAxiosPrivate();
 
     // Utility function to get the Bearer token
     const getBearerToken = async () => {
         try {
-          const response = await axiosPrivate.get(
-            // "http://localhost:8083/token",  
-            "token",  
-            null, 
-            {
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-            }
-          );
-          console.log("Generated Bearer Token:", response.data.access_token);  // Print the token
-          return response.data.access_token;
+            const response = await axiosPrivate.get(
+                "http://localhost:8083/token",
+                // "token",  
+                null,
+                {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                }
+            );
+            console.log("Generated Bearer Token:", response.data.access_token);  // Print the token
+            return response.data.access_token;
         } catch (error) {
-          console.error("Error fetching Bearer token:", error.response?.data || error.message);
-          throw new Error("Failed to obtain Bearer token");
+            console.error("Error fetching Bearer token:", error.response?.data || error.message);
+            throw new Error("Failed to obtain Bearer token");
         }
-      };      
+    };
 
 
     useEffect(() => {
@@ -52,9 +51,9 @@ const ApiView = () => {
 
                 const token = await getBearerToken();
 
+                // `/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
                 const response = await axiosPrivate.post(
-                    // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
-                    `/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
+                    `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
                     null,
                     {
                         headers: {
@@ -158,7 +157,7 @@ const ApiView = () => {
 
     return (
         <div>
-            <BreadcrumbComponent />
+            {/* <BreadcrumbComponent /> */}
             <Box sx={{ borderBottom: 1, borderColor: "divider", marginTop: '8px' }}>
                 <Tabs value={selectedTab} onChange={handleTabChange} aria-label="API Tabs"
                     sx={{
@@ -174,7 +173,7 @@ const ApiView = () => {
                 </Tabs>
             </Box>
 
-            <div className="flex h-[calc(100vh-140px)] mt-4">
+            <div className="flex mt-4">
                 <div className="w-1/2 p-1">
                     <Box sx={{ padding: 1 }}>
                         {selectedTab === 0 && <AppTab apiDetails={apiDetails} />}

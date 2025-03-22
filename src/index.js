@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthContextProvider } from './Context/AuthContext';
+import { ApiEndpointContextProvider } from './Context/ApiEndpointContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const queryClient = new QueryClient();
@@ -13,7 +14,9 @@ root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
-        <App />
+        <ApiEndpointContextProvider>
+          <App />
+        </ApiEndpointContextProvider>
       </AuthContextProvider>
     </QueryClientProvider>
   </React.StrictMode>

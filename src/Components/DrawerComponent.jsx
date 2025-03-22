@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -10,6 +10,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
 import { Chip, Box, Typography } from "@mui/material";
+import { ApiEndpointContext } from "../Context/ApiEndpointContext";
 
 const drawerWidth = 280;
 
@@ -27,36 +28,43 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
     const [openAPIs, setOpenAPIs] = useState(false);
     const [openEndpoints, setOpenEndpoints] = useState({});
     const navigate = useNavigate();
+    const {endpoint, setEndpoint} = useContext(ApiEndpointContext);
 
     const handleAPIToggle = () => {
         setOpenAPIs(!openAPIs);
     };
 
-    const handleEndpointToggle = (apiName) => {
+    const handleEndpointToggle = (apiName, apiId) => {
         setOpenEndpoints((prev) => ({
             ...prev,
             [apiName]: !prev[apiName],
         }));
+
+        // Determine the user role and set the correct path prefix
+        const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+
+        // Navigate to the API details page
+        navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
     };
 
 
     const handleListItemClick = (index, path, apiId) => {
         console.log("apiId: " + apiId);
-    
+
         setSelectedIndex(index);
         handleDrawerToggle();
-    
+        setEndpoint(path);
+
         // Determine the user role and set the correct path prefix
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
-    
+
         if (path && apiId) {
-            navigate(`/${pathPrefix}/apiview?endpoint=${encodeURIComponent(path)}&apiId=${encodeURIComponent(apiId)}`);
+            navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
         } else if (path) {
             navigate(path);
         }
-    };
-    
 
+    };
 
     return (
         <Drawer
@@ -118,7 +126,8 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                             transition: "background-color 0.3s ease",
                                                             "&:hover": { backgroundColor: "#e6e6e6" },
                                                         }}
-                                                        onClick={() => handleEndpointToggle(api.name)}
+                                                        // onClick={() => handleEndpointToggle(api.name)}
+                                                        onClick={() => handleEndpointToggle(api.name, api.id)}
                                                     >
                                                         <Typography
                                                             variant="body1"
@@ -237,3 +246,6 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
 };
 
 export default DrawerComponent;
+
+
+

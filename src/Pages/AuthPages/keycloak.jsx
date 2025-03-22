@@ -23,7 +23,8 @@
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
-  url: "https://13.200.189.76:5003",
+  // url: "https://13.200.189.76:5003",
+  url: "http://43.204.108.73:8346",
   realm: "master",
   clientId: "nishkaiv-client",
 });

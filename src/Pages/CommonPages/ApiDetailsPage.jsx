@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
     Typography, Box, Chip, Paper, Divider,
     Accordion, AccordionSummary, AccordionDetails,
@@ -13,15 +13,18 @@ import { Info, Security, Storage, Settings, CloudUpload } from '@mui/icons-mater
 import CircularProgress from '@mui/material/CircularProgress';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import ApiView from './ApiView';
+import { ApiEndpointContext } from '../../Context/ApiEndpointContext';
 
 const ApiDetailsPage = () => {
-    const { apiId } = useParams();
+    // const { apiId } = useParams();
     const axiosPrivate = useAxiosPrivate();
-    console.log("apiId: " + apiId);
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [uploadedImage, setUploadedImage] = useState(null);
     const [openSnackbar, setOpenSnackbar] = useState(false);
+    const { apiId } = useParams();
+    const { endpoint } = useContext(ApiEndpointContext);
 
     const handleSnackbarClose = (event, reason) => {
         if (reason === 'clickaway') {
@@ -51,8 +54,8 @@ const ApiDetailsPage = () => {
     const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: 'image/*' });
 
     const { data: apiDetails, isLoading, error } = useQuery(['apiDetails', apiId], async () => {
-        // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-        const response = await axiosPrivate.get(`/getapi/${apiId}`);
+        const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+        // const response = await axiosPrivate.get(`/getapi/${apiId}`);
         return response.data;
     });
 
@@ -196,6 +199,29 @@ const ApiDetailsPage = () => {
 
                 <Divider sx={{ marginY: 2 }} />
 
+                {uploadedImage && (
+                    <>
+                        <Accordion defaultExpanded>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e1f5fe' }}>
+                                <Settings color="info" sx={{ marginRight: 1 }} />
+                                <Typography variant="h6" sx={{ fontWeight: 600 }}>API Architecture Flow</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <img
+                                        src={uploadedImage}
+                                        alt="API Architecture"
+                                        style={{ maxWidth: '100%', borderRadius: 8 }}
+                                    />
+                                </Box>
+                            </AccordionDetails>
+                        </Accordion>
+                        <Divider sx={{ marginY: 2 }} />
+                    </>
+                )}
+
+                <Divider sx={{ marginY: 2 }} />
+
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e3f2fd' }}>
                         <Storage color="secondary" sx={{ marginRight: 1 }} />
@@ -232,53 +258,18 @@ const ApiDetailsPage = () => {
 
                 <Divider sx={{ marginY: 2 }} />
 
-                <Accordion>
+                <Accordion defaultExpanded={Boolean(apiId && endpoint)}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#ffebee' }}>
                         <Settings color="success" sx={{ marginRight: 1 }} />
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>Operations</Typography>
                     </AccordionSummary>
-                    <AccordionDetails>
-                        {apiDetails.operations?.map((operation, index) => (
-                            <Box key={index} sx={{ marginBottom: 1, padding: 1.5, backgroundColor: '#f1f8e9', borderRadius: 1 }}>
-                                <Typography variant="body1">
-                                    <strong>Target: </strong>
-                                    <span
-                                        onClick={() => handleTargetClick(operation.target, apiId)}
-                                        style={{ cursor: 'pointer', textDecoration: 'underline', color: '#1976d2' }}
-                                    >
-                                        {operation.target}
-                                    </span>
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">Method: {operation.verb}</Typography>
-                                <Typography variant="body2" color="text.secondary">Auth Type: {operation.authType}</Typography>
-                                <Typography variant="body2" color="text.secondary">Throttling Policy: {operation.throttlingPolicy}</Typography>
-                            </Box>
-                        ))}
+                    <AccordionDetails style={{ maxHeight: '350px', overflow: 'auto' }}>
+                        {apiId && endpoint && (
+                            <ApiView apiId={apiId} endpoint={endpoint} />
+                        )}
                     </AccordionDetails>
                 </Accordion>
 
-                <Divider sx={{ marginY: 2 }} />
-
-                {uploadedImage && (
-                    <>
-                        <Accordion defaultExpanded>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e1f5fe' }}>
-                                <Settings color="info" sx={{ marginRight: 1 }} />
-                                <Typography variant="h6" sx={{ fontWeight: 600 }}>API Architecture Flow</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    <img
-                                        src={uploadedImage}
-                                        alt="API Architecture"
-                                        style={{ maxWidth: '100%', borderRadius: 8 }}
-                                    />
-                                </Box>
-                            </AccordionDetails>
-                        </Accordion>
-                        <Divider sx={{ marginY: 2 }} />
-                    </>
-                )}
             </Paper>
 
             <Snackbar
