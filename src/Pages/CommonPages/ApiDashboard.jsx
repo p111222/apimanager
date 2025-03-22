@@ -17,8 +17,8 @@ const ApiDashboard = () => {
 
   // Fetching APIs from the backend using react-query
   const { data: apiList, isLoading, error } = useQuery('apiList', async () => {
-    const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-    // const response = await axiosPrivate.get("/getAll");
+    // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+    const response = await axiosPrivate.get("/getAll");
     return response.data.list; // Assuming the list of APIs is in response.data.list
   });
 

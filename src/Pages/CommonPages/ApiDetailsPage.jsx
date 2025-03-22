@@ -54,8 +54,8 @@ const ApiDetailsPage = () => {
     const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: 'image/*' });
 
     const { data: apiDetails, isLoading, error } = useQuery(['apiDetails', apiId], async () => {
-        const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-        // const response = await axiosPrivate.get(`/getapi/${apiId}`);
+        // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+        const response = await axiosPrivate.get(`/getapi/${apiId}`);
         return response.data;
     });
 
