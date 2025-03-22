@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { Chip, Box, Typography } from "@mui/material";
 import { ApiEndpointContext } from "../Context/ApiEndpointContext";
 
-const drawerWidth = 280;
+const drawerWidth = 260;
 
 const methodColors = {
     GET: "#4caf50",    // Green
@@ -68,8 +68,8 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
 
     return (
         <Drawer
-            variant="temporary"
-            open={openDrawer}
+            variant="permanent"
+            open={true}
             onClose={handleDrawerToggle}
             sx={{
                 display: { xs: "none", sm: "block" },

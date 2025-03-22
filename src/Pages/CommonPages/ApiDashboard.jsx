@@ -72,7 +72,7 @@ const ApiDashboard = () => {
                 padding: 3,
                 boxShadow: 4,
                 borderRadius: 3,
-                height: 200,
+                height: 220,
                 transition: '0.3s',
                 '&:hover': { boxShadow: 8, transform: 'translateY(-4px)' },
                 cursor: 'pointer',  // Add pointer cursor
@@ -107,7 +107,7 @@ const ApiDashboard = () => {
                 padding: 3,
                 boxShadow: 4,
                 borderRadius: 3,
-                height: 200,
+                height: 220,
                 transition: '0.3s',
                 '&:hover': { boxShadow: 8, transform: 'translateY(-4px)' },
               }}

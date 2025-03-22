@@ -181,7 +181,7 @@ const ApiDetailsPage = () => {
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                <Accordion defaultExpanded>
+                <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#f1f8e9' }}>
                         <Info color="primary" sx={{ marginRight: 1 }} />
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>General Information</Typography>
@@ -263,7 +263,7 @@ const ApiDetailsPage = () => {
                         <Settings color="success" sx={{ marginRight: 1 }} />
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>Operations</Typography>
                     </AccordionSummary>
-                    <AccordionDetails style={{ maxHeight: '350px', overflow: 'auto' }}>
+                    <AccordionDetails style={{ maxHeight: '500px', overflow: 'auto' }}>
                         {apiId && endpoint && (
                             <ApiView apiId={apiId} endpoint={endpoint} />
                         )}

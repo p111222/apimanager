@@ -22,21 +22,20 @@ import { AuthContext } from '../Context/AuthContext';
 import debounce from 'lodash.debounce';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create('margin', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
+const drawerWidth = 260;
+
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme }) => ({
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    marginLeft: drawerWidth, // Set margin to match drawer width
     transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
+      easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    marginLeft: 0,
-  }),
-}));
+  })
+);
+
 
 const ApiLayout = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -55,8 +54,8 @@ const ApiLayout = () => {
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-      // const response = await axiosPrivate.get("/getAll");
+      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );
@@ -65,8 +64,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        "http://localhost:8083/token",  
-        // "/token",  
+        // "http://localhost:8083/token",  
+        "/token",  
         null, 
         {
           headers: {
@@ -106,8 +105,8 @@ const ApiLayout = () => {
       let combinedResults = [];
       for (const field of searchFields) {
         const response = await axiosPrivate.get(
-          `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
-          // `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          // `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -167,8 +166,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-      // const response = await axiosPrivate.get(`/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,
@@ -264,7 +263,7 @@ const ApiLayout = () => {
 
   return (
     <div>
-      <AppBar position="static" sx={{ backgroundColor: "#070111" }}>
+      <AppBar position="fixed" sx={{ backgroundColor: "#070111" }}>
         <Toolbar>
           <div className="flex items-center justify-between w-full">
             <div className='flex items-center'>
@@ -384,7 +383,7 @@ const ApiLayout = () => {
         menuItems={menuItems}
       />
 
-      <Main open={openDrawer} style={{ padding: '15px' }}>
+      <Main open={openDrawer} style={{ padding: '15px', marginTop: '50px' }}>
         <Outlet />
       </Main>
     </div>
