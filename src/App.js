@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, useNavigate } from 'react-router-dom';
 import './App.css';
 import Login from './Pages/AuthPages/Login';
 import Register from './Pages/AuthPages/Register';
@@ -16,12 +16,14 @@ import useAxiosPrivate from './Hooks/useAxiosPrivate.js';
 import ApiDetailsPage from './Pages/CommonPages/ApiDetailsPage.jsx';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from '@mui/material';
+import { Modal, Typography, Button } from '@mui/material';
 
 const App = () => {
   const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  // const navigate = useNavigate();
 
   // Fetch user details on app load or refresh
   useEffect(() => {
@@ -68,6 +70,11 @@ const App = () => {
       setShowModal(false);
     }
   }, [sessionValidity]);
+
+  // const handleLogin = () => {
+  //   setShowModal(false);
+  //   navigate('/login');
+  // };
 
 
   // console.log("outsideLoading", loading);
@@ -149,6 +156,38 @@ const App = () => {
   return (
     <div className="App">
       <RouterProvider router={router} />
+      {/* <Modal open={showModal} onClose={() => setShowModal(false)}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 300,
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <Typography variant="h6" gutterBottom>
+            Invalid User Session
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            Your session has expired or is invalid. Please log in again.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLogin}
+            sx={{
+              position: 'absolute',
+              bottom: 8,
+              left: 8,
+            }}
+          >
+            Login
+          </Button>
+        </Box>
+      </Modal> */}
     </div>
   );
 };
