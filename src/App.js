@@ -16,14 +16,13 @@ import useAxiosPrivate from './Hooks/useAxiosPrivate.js';
 import ApiDetailsPage from './Pages/CommonPages/ApiDetailsPage.jsx';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from '@mui/material';
-import { Modal, Typography, Button } from '@mui/material';
+import InvalidSessionModal from './Components/InvalidSessionModal.jsx';
 
 const App = () => {
   const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  // const navigate = useNavigate();
 
   // Fetch user details on app load or refresh
   useEffect(() => {
@@ -64,8 +63,9 @@ const App = () => {
   // console.log("user app.js", JSON.stringify(user, null, 2));
 
   useEffect(() => {
-    if (sessionValidity === "invalid" && window.location.href.includes("user")) {
+    if (sessionValidity === "invalid") {
       setShowModal(true);
+
     } else {
       setShowModal(false);
     }
@@ -156,38 +156,21 @@ const App = () => {
   return (
     <div className="App">
       <RouterProvider router={router} />
-      {/* <Modal open={showModal} onClose={() => setShowModal(false)}>
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 300,
-          bgcolor: 'background.paper',
-          borderRadius: 2,
-          boxShadow: 24,
-          p: 4,
-        }}>
-          <Typography variant="h6" gutterBottom>
-            Invalid User Session
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Your session has expired or is invalid. Please log in again.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleLogin}
-            sx={{
-              position: 'absolute',
-              bottom: 8,
-              left: 8,
-            }}
-          >
-            Login
-          </Button>
-        </Box>
-      </Modal> */}
+
+      <InvalidSessionModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onNavigate={() => {
+          axiosPrivate.post('/auth/logout')
+            .then(() => {
+              console.log("Logged Out");
+              window.location.href = '/login';
+            }).catch((error) => {
+              console.log("Error during logout: ", error);
+            });
+        }}
+      />
+
     </div>
   );
 };

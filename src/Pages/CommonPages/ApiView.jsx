@@ -51,9 +51,9 @@ const ApiView = ({apiId, endpoint}) => {
 
                 const token = await getBearerToken();
 
-                // `/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
+                // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
                 const response = await axiosPrivate.post(
-                    `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
+                    `/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
                     null,
                     {
                         headers: {
