@@ -327,11 +327,11 @@
 
 
 import React, { useState, useContext, useEffect } from "react";
-import { Box, Typography, Paper, Divider, Chip, TextField, IconButton, Button } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+import { Box, Typography, Paper, Divider, Chip } from "@mui/material";
 import { AuthContext } from '../Context/AuthContext';
 import useAxiosPrivate from "../Hooks/useAxiosPrivate";
 import { useLocation, useParams } from "react-router-dom";
+import { ApiEndpointContext } from "../Context/ApiEndpointContext";
 
 const AppTab = ({ apiDetails }) => {
   const { user } = useContext(AuthContext);
@@ -343,6 +343,7 @@ const AppTab = ({ apiDetails }) => {
   // State for description editing
   const [editingDescription, setEditingDescription] = useState(false);
   const [description, setDescription] = useState("");
+  const { selectedApiName } = useContext(ApiEndpointContext);
 
   console.log("appTab component for apiDetails" + JSON.stringify(apiDetails));
 
@@ -498,7 +499,7 @@ const AppTab = ({ apiDetails }) => {
     >
       {/* API Name */}
       <Typography variant="h5" fontWeight="bold" gutterBottom>
-        {apiDetails?.info?.title || "API Title Not Available"}
+        {selectedApiName || apiDetails?.info?.title || "API Title Not Available"}
       </Typography>
 
       {/* API Description */}

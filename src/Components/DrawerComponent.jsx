@@ -720,7 +720,6 @@
 
 // export default DrawerComponent;
 
-
 import React, { useContext, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -746,27 +745,30 @@ const methodColors = {
     OPTIONS: "#607d8b" // Grey
 };
 
-
 const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [openAPIs, setOpenAPIs] = useState(false);
     const [openEndpoints, setOpenEndpoints] = useState({});
     const navigate = useNavigate();
-    const { endpoint, setEndpoint, setActiveTab } = useContext(ApiEndpointContext);
+    const { endpoint, setEndpoint, setActiveTab, setSelectedApiName } = useContext(ApiEndpointContext);
 
     const handleAPIToggle = () => {
         setOpenAPIs(!openAPIs);
+        setSelectedIndex("list-of-apis");
         if (openAPIs) {
-            // If List of APIs is being closed, reset all open endpoints
             setOpenEndpoints({});
         }
     };
 
-    const handleEndpointToggle = (apiName, apiId) => {
+    const handleEndpointToggle = (apiName, apiId, methodName) => {
         setOpenEndpoints((prev) => ({
             ...prev,
-            [apiName]: !prev[apiName],
+            [apiName]: true, 
         }));
+        setEndpoint(methodName);
+        setActiveTab("operations");
+
+        setSelectedApiName(apiName);
 
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
         navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
@@ -779,7 +781,6 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
         setActiveTab("operations");
 
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
-
         if (path && apiId) {
             navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
         } else if (path) {
@@ -806,16 +807,16 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                     <ListItemButton
                                         onClick={handleAPIToggle}
                                         sx={{
-                                            backgroundColor: openAPIs ? "#f1f1f1" : "transparent",
+                                            backgroundColor: selectedIndex === "list-of-apis" ? "#ff6600" : openAPIs ? "#f1f1f1" : "transparent",
                                             borderRadius: "12px",
                                             transition: "background-color 0.3s ease-in-out",
-                                            "&:hover": { backgroundColor: "#f1f1f1" },
+                                            "&:hover": { backgroundColor: selectedIndex === "list-of-apis" ? "#ff6600" : "#f1f1f1" },
                                             boxShadow: openAPIs ? "0 4px 8px rgba(0, 0, 0, 0.2)" : "none",
                                         }}
                                     >
                                         <ListItemIcon
                                             sx={{
-                                                color: openAPIs ? "#ff6600" : "inherit",
+                                                color: selectedIndex === "list-of-apis" ? "#fff" : openAPIs ? "#ff6600" : "inherit",
                                                 marginRight: "8px",
                                             }}
                                         >
@@ -827,7 +828,7 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                 sx: {
                                                     fontWeight: "bold",
                                                     fontSize: "1.2rem",
-                                                    color: openAPIs ? "#ff6600" : "#333",
+                                                    color: selectedIndex === "list-of-apis" ? "#fff" : openAPIs ? "#ff6600" : "#333",
                                                 },
                                             }}
                                         />
@@ -855,11 +856,7 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                         >
                                                             {api.name}
                                                         </Typography>
-                                                        {openEndpoints[api.name] ? (
-                                                            <ExpandLessIcon />
-                                                        ) : (
-                                                            <ExpandMoreIcon />
-                                                        )}
+                                                        {openEndpoints[api.name] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                                                     </ListItemButton>
                                                 </ListItem>
                                                 <Collapse in={openEndpoints[api.name]} timeout="auto" unmountOnExit>
@@ -881,13 +878,14 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                                             alignItems: "center",
                                                                             borderRadius: "8px",
                                                                         }}
-                                                                        onClick={() =>
+                                                                        onClick={() =>{
+                                                                            handleEndpointToggle(api.name, api.id, methodObj.name);
                                                                             handleListItemClick(
                                                                                 `${api.name}-${endpointIndex}-${methodObj.name}`,
                                                                                 methodObj.name,
                                                                                 api.id
                                                                             )
-                                                                        }
+                                                                        }}
                                                                     >
                                                                         <ListItemText
                                                                             primary={methodObj.name}
@@ -936,13 +934,18 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                         backgroundColor: selectedIndex === index ? "#ff6600" : "transparent",
                                         borderRadius: "12px",
                                         transition: "background-color 0.3s ease-in-out",
-                                        "&:hover": { backgroundColor: "#ffd1b3" },
+                                        "&:hover": { backgroundColor: selectedIndex === index ? "#ff6600" : "#ffd1b3" },
                                     }}
                                 >
                                     <ListItemIcon sx={{ minWidth: 40, color: selectedIndex === index ? "#fff" : "inherit" }}>
                                         {item.icon}
                                     </ListItemIcon>
-                                    <ListItemText primary={item.text} />
+                                    <ListItemText 
+                                        primary={item.text} 
+                                        primaryTypographyProps={{
+                                            color: selectedIndex === index ? "#fff" : "inherit"
+                                        }}
+                                    />
                                 </ListItemButton>
                             </ListItem>
                         )}

@@ -35,6 +35,20 @@ const ApiDetailsPage = () => {
     const [editedDescription, setEditedDescription] = useState('');
     const { activeTab, setActiveTab } = useContext(ApiEndpointContext);
     const [expanded, setExpanded] = useState('');
+    const operationsAccordionRef = React.useRef(null);
+
+    useEffect(() => {
+        if (apiId && endpoint && operationsAccordionRef.current) {
+            setTimeout(() => {
+                operationsAccordionRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                setExpanded('operations');
+            }, 100);
+        }
+    }, [apiId, endpoint]);
+
 
     useEffect(() => {
         if (activeTab === 'operations') {
@@ -42,8 +56,8 @@ const ApiDetailsPage = () => {
         }
     }, [activeTab]);
 
-    console.log("expanded"+ expanded);
-    
+    console.log("expanded" + expanded);
+
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -168,9 +182,6 @@ const ApiDetailsPage = () => {
 
             setEditingDescription(false);  // Close the editing mode
 
-            // Optionally, you can fetch the updated API details here
-            // const updatedApiDetails = await axiosPrivate.get(`https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`);
-            // setApiDetails(updatedApiDetails.data);
 
         } catch (error) {
             console.error("Error updating API:", error.response?.data || error.message);
@@ -239,10 +250,14 @@ const ApiDetailsPage = () => {
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         width: 400,
+                        maxHeight: '80vh', // Limit modal height
                         bgcolor: 'background.paper',
                         boxShadow: 24,
                         p: 4,
-                        borderRadius: 2
+                        borderRadius: 2,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden' // Ensure content doesn't overflow modal
                     }}
                 >
                     <Typography variant="h6" sx={{ mb: 2 }}>Upload API Architecture Image</Typography>
@@ -254,28 +269,46 @@ const ApiDetailsPage = () => {
                             textAlign: 'center',
                             backgroundColor: '#e3f2fd',
                             cursor: 'pointer',
-                            borderRadius: 1
+                            borderRadius: 1,
+                            flexShrink: 0 // Prevent dropzone from shrinking
                         }}
                     >
                         <input {...getInputProps()} />
                         <Typography>Drag and drop an image here, or click to select one</Typography>
                     </Box>
                     {uploadedImage && (
-                        <Box sx={{ mt: 2 }}>
-                            <Typography variant="body2">Preview:</Typography>
+                        <Box sx={{
+                            mt: 2,
+                            height: 300, // Fixed height for preview container
+                            overflow: 'auto', // Add scroll for large images
+                            border: '1px solid #e0e0e0',
+                            borderRadius: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'flex-start' // Align to top for tall images
+                        }}>
+                            <Typography variant="body2" sx={{ position: 'absolute', top: 8, left: 8 }}>Preview:</Typography>
                             <img
                                 src={uploadedImage}
                                 alt="Preview"
-                                style={{ width: '100%', borderRadius: 8, marginTop: 8 }}
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'contain' // Maintain aspect ratio
+                                }}
                             />
                         </Box>
                     )}
                     <Button
                         variant="contained"
                         color="primary"
-                        sx={{ mt: 2 }}
+                        sx={{
+                            mt: 2,
+                            flexShrink: 0 // Keep button at bottom
+                        }}
                         onClick={handleUpload}
                         fullWidth
+                        disabled={!uploadedImage} // Disable if no image
                     >
                         Upload
                     </Button>
@@ -294,111 +327,186 @@ const ApiDetailsPage = () => {
                 }}
             >
 
-                <Accordion defaultExpanded onChange={handleAccordionChange('general')}>
+                <Accordion
+                    defaultExpanded
+                    onChange={handleAccordionChange('general')}
+                >
                     <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        sx={{
-                            backgroundColor: '#e0f2f1',
-                            borderRadius: 1,
-                            padding: '12px 20px',
-                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                            '&:hover': {
-                                backgroundColor: '#b2dfdb', // Slight hover effect
-                            },
-                        }}
+                        expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e1f5fe' }}
                     >
-                        <Info color="primary" sx={{ marginRight: 1 }} />
-                        <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '18px' }}>
+                        <Info color="primary" sx={{
+                            marginRight: 1,
+                            // fontSize: '28px',
+                            color: '#00796b'
+                        }} />
+                        <Typography
+                            variant="h6" sx={{ fontWeight: 600 }}
+                        >
                             General Information
                         </Typography>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ padding: '16px 20px' }}>
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                <strong>Name:</strong> {apiDetails.name}
-                            </Typography>
-                        </Box>
 
-                        {/* Description Section */}
-                        <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
-                            {isAdmin && editingDescription ? (
-                                <>
-                                    <TextField
-                                        label="Description"
-                                        value={editedDescription || apiDetails.description}
-                                        onChange={(e) => setEditedDescription(e.target.value)}
-                                        fullWidth
-                                        multiline
-                                        maxRows={4}
-                                        variant="outlined"
-                                        sx={{
-                                            backgroundColor: '#ffffff',
-                                            borderRadius: 1,
-                                            '& .MuiOutlinedInput-root': {
-                                                borderColor: '#90caf9',
-                                            },
-                                        }}
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleUpdateDescription}
-                                        sx={{ ml: 2, height: '100%' }}
-                                    >
-                                        Update
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Typography variant="body2" color="text.secondary" sx={{ flex: 1 }}>
-                                        {apiDetails.description || "No description available"}
-                                    </Typography>
-                                    {isAdmin && !editingDescription && (
-                                        <IconButton
-                                            onClick={() => setEditingDescription(true)}
-                                            size="small"
-                                            sx={{ ml: 1 }}
+                    <AccordionDetails sx={{
+                        padding: '24px 32px',
+                        backgroundColor: '#f5f5f5',
+                        borderTop: '1px solid #e0e0e0'
+                    }}>
+                        <Box sx={{
+                            display: 'grid',
+                            gridTemplateColumns: 'minmax(120px, max-content) 1fr',
+                            gap: '12px 8px',
+                            alignItems: 'baseline'
+                        }}>
+                            <Typography variant="body1" sx={{
+                                fontWeight: 500,
+                                color: '#00796b',
+                                alignSelf: 'center'
+                            }}>
+                                Name:
+                            </Typography>
+                            <Typography variant="body1" sx={{
+                                color: '#424242',
+                                paddingLeft: '4px' // Reduced padding to move the value closer
+                            }}>
+                                {apiDetails.name}
+                            </Typography>
+
+                            <Typography variant="body1" sx={{
+                                fontWeight: 500,
+                                color: '#00796b',
+                                alignSelf: 'flex-start',
+                                pt: 1
+                            }}>
+                                Description:
+                            </Typography>
+                            <Box sx={{
+                                position: 'relative',
+                                paddingLeft: '4px' // Reduced padding to move the value closer
+                            }}>
+                                {isAdmin && editingDescription ? (
+                                    <Box>
+                                        <TextField
+                                            label="Description"
+                                            value={editedDescription || apiDetails.description}
+                                            onChange={(e) => setEditedDescription(e.target.value)}
+                                            fullWidth
+                                            multiline
+                                            minRows={3}
+                                            maxRows={8}
+                                            variant="outlined"
+                                            sx={{
+                                                backgroundColor: '#ffffff',
+                                                borderRadius: '8px',
+                                                '& .MuiOutlinedInput-root': {
+                                                    '& fieldset': {
+                                                        borderColor: '#b2dfdb',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: '#00796b',
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, gap: 1 }}>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={() => setEditingDescription(false)}
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    color: '#00796b',
+                                                    borderColor: '#00796b'
+                                                }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={handleUpdateDescription}
+                                                sx={{
+                                                    textTransform: 'none',
+                                                    backgroundColor: '#00796b',
+                                                    '&:hover': {
+                                                        backgroundColor: '#00695c',
+                                                    },
+                                                }}
+                                            >
+                                                Save
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                ) : (
+                                    <Box sx={{
+                                        position: 'relative',
+                                        paddingRight: isAdmin ? '32px' : '0'
+                                    }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                marginLeft: '35px',
+                                                whiteSpace: 'pre-wrap',
+                                                wordBreak: 'break-word',
+                                                lineHeight: '1.8',
+                                                color: '#424242'
+                                            }}
                                         >
-                                            <EditIcon />
-                                        </IconButton>
-                                    )}
-                                </>
-                            )}
-                        </Box>
+                                            {apiDetails.description || "No description available"}
+                                        </Typography>
+                                        {isAdmin && !editingDescription && (
+                                            <IconButton
+                                                onClick={() => setEditingDescription(true)}
+                                                size="small"
+                                                sx={{
+                                                    position: 'absolute',
+                                                    right: '-10px',
+                                                    top: 0,
+                                                    backgroundColor: 'rgba(0, 121, 107, 0.1)',
+                                                    '&:hover': {
+                                                        backgroundColor: 'rgba(0, 121, 107, 0.2)',
+                                                    },
+                                                }}
+                                            >
+                                                <EditIcon fontSize="small" sx={{ color: '#00796b' }} />
+                                            </IconButton>
+                                        )}
+                                    </Box>
+                                )}
+                            </Box>
 
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                <strong>Provider:</strong> {apiDetails.provider}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                <strong>Type:</strong> {apiDetails.type}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                <strong>Version:</strong> {apiDetails.version}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                <strong>Status:</strong> {apiDetails.lifeCycleStatus}
-                            </Typography>
-                        </Box>
-                        <Box sx={{ mb: 2 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                                <strong>Visibility:</strong> {apiDetails.visibility}
-                            </Typography>
+                            {/* Other fields */}
+                            {[
+                                { label: 'Provider', value: apiDetails.provider },
+                                { label: 'Type', value: apiDetails.type },
+                                { label: 'Version', value: apiDetails.version },
+                                { label: 'Status', value: apiDetails.lifeCycleStatus },
+                                { label: 'Visibility', value: apiDetails.visibility }
+                            ].map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <Typography variant="body1" sx={{
+                                        fontWeight: 500,
+                                        color: '#00796b',
+                                        alignSelf: 'center'
+                                    }}>
+                                        {item.label}:
+                                    </Typography>
+                                    <Typography variant="body1" sx={{
+                                        color: '#424242',
+                                        paddingLeft: '4px' // Reduced padding to move the value closer
+                                    }}>
+                                        {item.value}
+                                    </Typography>
+                                </React.Fragment>
+                            ))}
                         </Box>
                     </AccordionDetails>
                 </Accordion>
 
 
-                <Divider sx={{ marginY: 2 }} />
 
                 {uploadedImage && (
                     <>
+                        <Divider sx={{ marginY: 2 }} />
                         <Accordion defaultExpanded onChange={handleAccordionChange('apiFlow')}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e1f5fe' }}>
                                 <Settings color="info" sx={{ marginRight: 1 }} />
@@ -414,7 +522,7 @@ const ApiDetailsPage = () => {
                                 </Box>
                             </AccordionDetails>
                         </Accordion>
-                        <Divider sx={{ marginY: 2 }} />
+                        {/* <Divider sx={{ marginY: 2 }} /> */}
                     </>
                 )}
 
@@ -456,7 +564,7 @@ const ApiDetailsPage = () => {
 
                 <Divider sx={{ marginY: 2 }} />
 
-                <Accordion defaultExpanded={Boolean(apiId && endpoint)} onChange={handleAccordionChange('operations')} expanded={expanded === 'operations'}>
+                <Accordion defaultExpanded={Boolean(apiId && endpoint)} onChange={handleAccordionChange('operations')} expanded={expanded === 'operations'} ref={operationsAccordionRef}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#ffebee' }}>
                         <Settings color="success" sx={{ marginRight: 1 }} />
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>Operations</Typography>

@@ -271,7 +271,8 @@ const ApiLayout = () => {
                 aria-label="open drawer"
                 edge="start"
                 onClick={handleDrawerToggle}
-                sx={{ color: menuSelected ? "#ff6600" : "white" }}
+                // sx={{ color: menuSelected ? "#ff6600" : "white" }}
+                sx={{ color: "#ff6600" }}
               >
                 <MenuIcon />
               </IconButton>
