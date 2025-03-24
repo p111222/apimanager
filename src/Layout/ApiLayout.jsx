@@ -54,8 +54,8 @@ const ApiLayout = () => {
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-      const response = await axiosPrivate.get("/getAll");
+      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      // const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );

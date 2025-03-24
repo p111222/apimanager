@@ -3,9 +3,11 @@ import React, { createContext, useState } from 'react'
 export const ApiEndpointContext = createContext();
 
 export const ApiEndpointContextProvider = ({ children }) => {
-    const [endpoint, setEndpoint] = useState(null)
+    const [endpoint, setEndpoint] = useState(null);
+    const [activeTab, setActiveTab] = useState("generalInfo"); 
+
     return (
-        <ApiEndpointContext.Provider value={{ endpoint, setEndpoint }}>
+        <ApiEndpointContext.Provider value={{ endpoint, setEndpoint, activeTab, setActiveTab }}>
             {children}
         </ApiEndpointContext.Provider>
     )

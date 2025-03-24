@@ -1,30 +1,356 @@
+// import React, { useState, useContext, useEffect } from "react";
+// import { Box, Typography, Paper, Divider, Chip, TextField, IconButton, Button } from "@mui/material";
+// import EditIcon from "@mui/icons-material/Edit";
+// import { AuthContext } from '../Context/AuthContext';
+// import useAxiosPrivate from "../Hooks/useAxiosPrivate";
+// import { useLocation, useParams } from "react-router-dom";
+
+// const AppTab = ({ apiDetails }) => {
+//   const { user } = useContext(AuthContext);
+//   const isAdmin = user?.roles?.includes("admin");
+//   const axiosPrivate = useAxiosPrivate();
+//   const location = useLocation();
+//   // const queryParam = new URLSearchParams(location.search);
+//   // const apiId = queryParam.get('apiId');
+//   const { apiId } = useParams();
+
+//   console.log("appTab component for apiDetails"+JSON.stringify(apiDetails));
+
+//   // State for description editing
+//   const [editingDescription, setEditingDescription] = useState(false);
+//   const [description, setDescription] = useState("");
+
+//   useEffect(() => {
+//     if (apiDetails?.description) {
+//       setDescription(apiDetails.description);
+//     }
+//   }, [apiDetails]);
+
+
+//   // Toggle Edit Mode
+//   const toggleEditing = () => setEditingDescription(!editingDescription);
+
+//   // Utility function to get the Bearer token
+//   const getBearerToken = async () => {
+//     try {
+//       const response = await axiosPrivate.get(
+//         "http://localhost:8083/token",
+//         // "/token",  
+//         null,
+//         {
+//           headers: {
+//             "Content-Type": "application/x-www-form-urlencoded",
+//           },
+//         }
+//       );
+//       console.log("Generated Bearer Token:", response.data.access_token);  // Print the token
+//       return response.data.access_token;
+//     } catch (error) {
+//       console.error("Error fetching Bearer token:", error.response?.data || error.message);
+//       throw new Error("Failed to obtain Bearer token");
+//     }
+//   };
+
+//   // Handle Update
+//   const handleUpdate = async () => {
+//     if (!apiId) {
+//       console.error("API ID is not available.");
+//       alert("API ID is missing. Unable to update.");
+//       return;
+//     }
+
+//     try {
+//       const token = await getBearerToken();
+//       // Fallback values for essential fields
+//       const name = apiDetails?.info?.title || apiDetails?.name || "Default API Name";
+//       const version = apiDetails?.info?.version || apiDetails?.version || "1.0.0";
+//       const context = apiDetails?.context || "/default-context";
+//       const provider = apiDetails?.provider || "default-provider";
+//       const lifeCycleStatus = apiDetails?.lifeCycleStatus || "CREATED";
+
+//       // Extracting operations from apiDetails.paths
+//       const operations = Object.keys(apiDetails?.paths || {}).flatMap((path) =>
+//         Object.keys(apiDetails.paths[path]).map((method) => ({
+//           target: path,
+//           verb: method.toUpperCase(),
+//           authType: "None",
+//           throttlingPolicy: "Unlimited",
+//         }))
+//       );
+
+//       // Check if operations array is not empty
+//       if (operations.length === 0) {
+//         console.error("No valid operations found for the API.");
+//         alert("API must have at least one resource defined.");
+//         return;
+//       }
+
+//       const updatedData = {
+//         name,
+//         description,
+//         context,
+//         version,
+//         provider,
+//         lifeCycleStatus,
+//         operations,
+//       };
+
+//       console.log("Updated Data Payload:", updatedData);
+
+//       const response = await axiosPrivate.put(
+//         `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
+//         // `/am/publisher/v4/apis/${apiId}`,
+//         updatedData,
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+
+//       console.log("API Updated Successfully:", response.data);
+//       alert("API details updated successfully!");
+
+//       // Fetch the updated details to update the UI
+//       await fetchDescription();
+
+//       setEditingDescription(false);
+
+//     } catch (error) {
+//       console.error("Error updating API:", error.response?.data || error.message);
+//       alert("Error updating API details");
+//     }
+//   };
+
+//   // Function to fetch the description from the new API endpoint
+//   const fetchDescription = async () => {
+//     try {
+//       const fetchResponse = await axiosPrivate.get(
+//         `http://localhost:8081/api/getapi/${apiId}`
+//         // `/getapi/${apiId}`
+//       );
+
+//       const initialDescription = fetchResponse.data?.description || "No description available";
+//       setDescription(initialDescription);
+//     } catch (error) {
+//       console.error("Error fetching API details:", error.response?.data || error.message);
+//     }
+//   };
+
+//   // Initial description fetch on component mount
+//   useEffect(() => {
+//     if (apiId) fetchDescription();
+//   }, [apiId]);
+
+//   useEffect(() => {
+//     console.log("apiDetails (on change):", apiDetails);
+//   }, [apiDetails]);
+
+//   if (!apiDetails) return <Typography>No API Selected</Typography>;
+
+//   // Extracting necessary fields from apiDetails
+//   const endpoint = Object.keys(apiDetails.paths)[0];
+//   const operation = apiDetails.paths[endpoint]?.post || apiDetails.paths[endpoint]?.get;
+//   const method = operation ? (apiDetails.paths[endpoint]?.post ? "POST" : "GET") : "N/A";
+
+//   const headers = operation?.parameters?.filter((param) => param.in === "header") || [];
+//   const queryParams = operation?.parameters?.filter((param) => param.in === "query") || [];
+//   const pathParams = operation?.parameters?.filter((param) => param.in === "path") || [];
+//   const requestBody = operation?.requestBody?.content?.["application/json"]?.schema?.properties || {};
+//   const responseExample = operation?.responses?.["200"]?.content?.["application/json"]?.schema?.properties || {};
+
+//   return (
+//     <Box
+//       sx={{
+//         width: "100%",
+//         p: 3,
+//         borderRadius: 2,
+//         boxShadow: "0px 6px 16px rgba(0,0,0,0.3)",
+//         backgroundColor: "#fff",
+//         textAlign: "left",
+//       }}
+//     >
+//       {/* API Name */}
+//       <Typography variant="h5" fontWeight="bold" gutterBottom>
+//         {apiDetails.info.title}
+//       </Typography>
+
+//       {/* API Description */}
+//       <Box display="flex" alignItems="center" gap={1} sx={{ mb: 2 }}>
+//         <Typography variant="body1" color="text.secondary" sx={{ flex: 1 }}>
+//           {description || "No description available"}
+//         </Typography>
+//         {/* {editingDescription ? ( */}
+//         {/* <> */}
+//         {/* <TextField
+//               label="Description"
+//               value={description}
+//               onChange={(e) => setDescription(e.target.value)}
+//               fullWidth
+//               multiline
+//               maxRows={4}
+//               variant="outlined"
+//             /> */}
+//         {/* <Button
+//               variant="contained"
+//               color="primary"
+//               onClick={handleUpdate}
+//               sx={{ ml: 1 }}
+//             >
+//               Update
+//             </Button>
+//           </>
+//         ) : (
+//           <Typography variant="body1" color="text.secondary" sx={{ flex: 1 }}>
+//             {description || "No description available"}
+//           </Typography>
+//         )}
+//         {isAdmin && !editingDescription && (
+//           <IconButton onClick={toggleEditing} size="small" sx={{ ml: 1 }}>
+//             <EditIcon />
+//           </IconButton>
+//         )} */}
+//       </Box>
+
+//       <Divider sx={{ mb: 2 }} />
+
+//       {/* Request Type & Endpoint */}
+//       <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
+//         <Chip
+//           label={method.toUpperCase()}
+//           color={method.toUpperCase() === "GET" ? "success" : "primary"}
+//           sx={{ fontWeight: "bold", fontSize: "14px" }}
+//         />
+//         <Typography variant="body1" fontFamily="monospace">
+//           {endpoint}
+//         </Typography>
+//       </Box>
+
+//       {/* Parameters (Headers, Query, Path, Body) */}
+//       <Paper sx={{ p: 2, mb: 2, backgroundColor: "#f9f9f9" }}>
+//         <Typography variant="h6" fontWeight="bold">
+//           Request Details
+//         </Typography>
+
+//         {/* Headers */}
+//         <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
+//           Headers:
+//         </Typography>
+//         {headers.length > 0 ? (
+//           headers.map((header, index) => (
+//             <Typography key={index} variant="body2" fontFamily="monospace">
+//               {header.name}: {header.schema?.example || "N/A"}
+//             </Typography>
+//           ))
+//         ) : (
+//           <Typography variant="body2" color="text.secondary">
+//             No headers required.
+//           </Typography>
+//         )}
+
+//         {/* Query Params */}
+//         <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
+//           Query Parameters:
+//         </Typography>
+//         {queryParams.length > 0 ? (
+//           queryParams.map((param, index) => (
+//             <Typography key={index} variant="body2" fontFamily="monospace">
+//               {param.name}={param.schema?.example || "N/A"}
+//             </Typography>
+//           ))
+//         ) : (
+//           <Typography variant="body2" color="text.secondary">
+//             No query parameters.
+//           </Typography>
+//         )}
+
+//         {/* Path Params */}
+//         <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
+//           Path Parameters:
+//         </Typography>
+//         {pathParams.length > 0 ? (
+//           pathParams.map((param, index) => (
+//             <Typography key={index} variant="body2" fontFamily="monospace">
+//               {param.name}: {param.schema?.example || "N/A"}
+//             </Typography>
+//           ))
+//         ) : (
+//           <Typography variant="body2" color="text.secondary">
+//             No path parameters.
+//           </Typography>
+//         )}
+
+//         {/* Request Body */}
+//         <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
+//           Request Body:
+//         </Typography>
+//         {Object.keys(requestBody).length > 0 ? (
+//           <Paper sx={{ p: 2, mt: 1, backgroundColor: "#e8f5e9" }}>
+//             <Typography variant="body2" fontFamily="monospace" component="pre">
+//               {JSON.stringify(requestBody, null, 2)}
+//             </Typography>
+//           </Paper>
+//         ) : (
+//           <Typography variant="body2" color="text.secondary">
+//             No request body.
+//           </Typography>
+//         )}
+//       </Paper>
+
+//       {/* Response Example */}
+//       <Paper sx={{ p: 2, backgroundColor: "#f3e5f5" }}>
+//         <Typography variant="h6" fontWeight="bold">
+//           Response Example
+//         </Typography>
+//         {Object.keys(responseExample).length > 0 ? (
+//           <Typography
+//             variant="body2"
+//             fontFamily="monospace"
+//             component="pre"
+//             sx={{ mt: 1 }}
+//           >
+//             {JSON.stringify(responseExample, null, 2)}
+//           </Typography>
+//         ) : (
+//           <Typography variant="body2" color="text.secondary">
+//             No response example available.
+//           </Typography>
+//         )}
+//       </Paper>
+//     </Box>
+//   );
+// };
+
+// export default AppTab;
+
+
+
 import React, { useState, useContext, useEffect } from "react";
 import { Box, Typography, Paper, Divider, Chip, TextField, IconButton, Button } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { AuthContext } from '../Context/AuthContext';
 import useAxiosPrivate from "../Hooks/useAxiosPrivate";
-import { useLocation } from "react-router-dom";
-import axios from "axios";
+import { useLocation, useParams } from "react-router-dom";
 
 const AppTab = ({ apiDetails }) => {
   const { user } = useContext(AuthContext);
   const isAdmin = user?.roles?.includes("admin");
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
-  const queryParam = new URLSearchParams(location.search);
-  const apiId = queryParam.get('apiId');
+  const { apiId } = useParams();
 
   // State for description editing
   const [editingDescription, setEditingDescription] = useState(false);
   const [description, setDescription] = useState("");
 
+  console.log("appTab component for apiDetails" + JSON.stringify(apiDetails));
 
   useEffect(() => {
     if (apiDetails?.description) {
       setDescription(apiDetails.description);
     }
   }, [apiDetails]);
-
 
   // Toggle Edit Mode
   const toggleEditing = () => setEditingDescription(!editingDescription);
@@ -33,9 +359,9 @@ const AppTab = ({ apiDetails }) => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        // "http://localhost:8083/token",  
-        "/token",  
-        null,  
+        // "http://localhost:8083/token",
+        "/token",
+        null,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -128,7 +454,7 @@ const AppTab = ({ apiDetails }) => {
       const fetchResponse = await axiosPrivate.get(
         // `http://localhost:8081/api/getapi/${apiId}`
         `/getapi/${apiId}`
-      );
+     );
 
       const initialDescription = fetchResponse.data?.description || "No description available";
       setDescription(initialDescription);
@@ -143,7 +469,7 @@ const AppTab = ({ apiDetails }) => {
   }, [apiId]);
 
   useEffect(() => {
-    console.log("apiDetails (on change):", apiDetails);
+    // console.log("apiDetails (on change):", apiDetails);
   }, [apiDetails]);
 
   if (!apiDetails) return <Typography>No API Selected</Typography>;
@@ -172,41 +498,14 @@ const AppTab = ({ apiDetails }) => {
     >
       {/* API Name */}
       <Typography variant="h5" fontWeight="bold" gutterBottom>
-        {apiDetails.info.title}
+        {apiDetails?.info?.title || "API Title Not Available"}
       </Typography>
 
       {/* API Description */}
       <Box display="flex" alignItems="center" gap={1} sx={{ mb: 2 }}>
-        {editingDescription ? (
-          <>
-            <TextField
-              label="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              fullWidth
-              multiline
-              maxRows={4}
-              variant="outlined"
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleUpdate}
-              sx={{ ml: 1 }}
-            >
-              Update
-            </Button>
-          </>
-        ) : (
-          <Typography variant="body1" color="text.secondary" sx={{ flex: 1 }}>
-            {description || "No description available"}
-          </Typography>
-        )}
-        {isAdmin && !editingDescription && (
-          <IconButton onClick={toggleEditing} size="small" sx={{ ml: 1 }}>
-            <EditIcon />
-          </IconButton>
-        )}
+        <Typography variant="body1" color="text.secondary" sx={{ flex: 1 }}>
+          {description || "No description available"}
+        </Typography>
       </Box>
 
       <Divider sx={{ mb: 2 }} />
@@ -300,12 +599,7 @@ const AppTab = ({ apiDetails }) => {
           Response Example
         </Typography>
         {Object.keys(responseExample).length > 0 ? (
-          <Typography
-            variant="body2"
-            fontFamily="monospace"
-            component="pre"
-            sx={{ mt: 1 }}
-          >
+          <Typography variant="body2" fontFamily="monospace" component="pre">
             {JSON.stringify(responseExample, null, 2)}
           </Typography>
         ) : (
