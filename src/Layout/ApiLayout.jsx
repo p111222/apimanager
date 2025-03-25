@@ -65,8 +65,8 @@ const ApiLayout = () => {
     try {
       const response = await axiosPrivate.get(
         // "http://localhost:8083/token",  
-        "/token",  
-        null, 
+        "/token",
+        null,
         {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
@@ -369,7 +369,12 @@ const ApiLayout = () => {
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
-                <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleMenuClose();
+                    navigate(isAdmin ? '/admin/my-profile' : '/user/my-profile');
+                  }}
+                >My Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
