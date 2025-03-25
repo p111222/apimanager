@@ -369,7 +369,7 @@ const ApiLayout = () => {
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "top", horizontal: "right" }}
               >
-                {/* <MenuItem onClick={handleMenuClose}>Change Password</MenuItem> */}
+                <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>

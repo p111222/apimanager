@@ -425,7 +425,8 @@ const AppTab = ({ apiDetails }) => {
 
       const response = await axiosPrivate.put(
         // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
-        `/am/publisher/v4/apis/${apiId}`,
+        // `/am/publisher/v4/apis/${apiId}`,
+        `/${apiId}`,
         updatedData,
         {
           headers: {
@@ -453,8 +454,8 @@ const AppTab = ({ apiDetails }) => {
   const fetchDescription = async () => {
     try {
       const fetchResponse = await axiosPrivate.get(
-        // `http://localhost:8081/api/getapi/${apiId}`
-        `/getapi/${apiId}`
+        `http://localhost:8081/api/getapi/${apiId}`
+        // `/getapi/${apiId}`
      );
 
       const initialDescription = fetchResponse.data?.description || "No description available";
@@ -473,7 +474,7 @@ const AppTab = ({ apiDetails }) => {
     // console.log("apiDetails (on change):", apiDetails);
   }, [apiDetails]);
 
-  if (!apiDetails) return <Typography>No API Selected</Typography>;
+  if (!apiDetails) return <Typography>Please Select an API to view additional details</Typography>;
 
   // Extracting necessary fields from apiDetails
   const endpoint = Object.keys(apiDetails.paths)[0];

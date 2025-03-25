@@ -267,10 +267,11 @@ import BodyTab from '../../Components/BodyTab';
 import AuthorizationTab from '../../Components/AuthorizationTab';
 import { useLocation } from 'react-router-dom';
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
+import axios from 'axios';
 
 const ApiView = ({ apiId, endpoint }) => {
     const [selectedTab, setSelectedTab] = useState(0);
-    const [selectedError, setSelectedError] = useState("400");
+    const [selectedError, setSelectedError] = useState("");
     const [copied, setCopied] = useState({ request: false, response: false, error: false });
     const [apiDetails, setApiDetails] = useState(null);
     const [curlCommand, setCurlCommand] = useState("");
@@ -298,14 +299,19 @@ const ApiView = ({ apiId, endpoint }) => {
         }
     };
 
+    console.log("apiview" + apiId);
+
+
     useEffect(() => {
         const fetchApiDetails = async () => {
             try {
                 const token = await getBearerToken();
 
+                // Fetch API details using the provided apiId
                 const response = await axiosPrivate.post(
                     // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
-                    `/am/publisher/v4/apis/${apiId}/generate-mock-scripts`,
+                    // `http://localhost:8084/api/generate-mock-scripts/${apiId}`,
+                    `/generate-mock-scripts/${apiId}`,
                     null,
                     {
                         headers: {
@@ -466,15 +472,30 @@ const ApiView = ({ apiId, endpoint }) => {
                                         color: 'white',
                                         '& .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
                                     }}
+                                    displayEmpty // This ensures "Select an error" appears when no value is selected
                                 >
-                                    {Object.keys(apiDetails?.paths?.[endpoint]?.post?.responses || {}).map((code) => (
-                                        <MenuItem key={code} value={code}>{code}</MenuItem>
-                                    ))}
+                                    {/* Default option */}
+                                    <MenuItem value="" disabled>
+                                        <em>Select an error</em>
+                                    </MenuItem>
+
+                                    {/* Dynamically render error codes if they exist */}
+                                    {apiDetails?.paths?.[endpoint]?.post?.responses ? (
+                                        Object.keys(apiDetails.paths[endpoint].post.responses)
+                                            .filter(code => code !== "200") // Exclude success response
+                                            .map((code) => (
+                                                <MenuItem key={code} value={code}>{code}</MenuItem>
+                                            ))
+                                    ) : (
+                                        <MenuItem disabled>No errors available</MenuItem>
+                                    )}
                                 </Select>
                             </FormControl>
                         </div>
                         <div className="bg-gray-900 text-red-400 p-4 rounded-md text-sm font-mono h-40 overflow-y-auto custom-scrollbar">
-                            <pre className="text-left">{errorResponse || "No Error Response"}</pre>
+                            <pre className="text-left">
+                                {selectedError ? errorResponse : "Please select an error code"}
+                            </pre>
                         </div>
                     </div>
                 </div>

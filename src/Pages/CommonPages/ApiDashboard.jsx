@@ -57,7 +57,7 @@ const ApiDashboard = () => {
     <Box sx={{ padding: 3, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       {/* Top Recently APIs Section */}
       <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, color: '#333' }}>
-        Top Recently APIs
+        Recently Viewed APIs
       </Typography>
       <Slider {...settings}>
         {apiList?.map((api, index) => (

@@ -177,9 +177,11 @@ const ApiDetailsPage = () => {
             console.log("Updated Data Payload:", updatedData);
 
             // Send PUT request to update API details
+            // `/am/publisher/v4/apis/${apiId}`,
             const response = await axiosPrivate.put(
                 // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
-                `/am/publisher/v4/apis/${apiId}`,
+                // `http://localhost:8085/api/${apiId}`,
+                `/${apiId}`,
                 updatedData,
                 {
                     headers: {
@@ -249,7 +251,7 @@ const ApiDetailsPage = () => {
                     startIcon={<CloudUpload />}
                     onClick={handleOpen}
                 >
-                    Upload Architecture
+                    Upload Details
                 </Button>
             </Box>
 
