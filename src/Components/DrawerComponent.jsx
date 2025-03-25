@@ -761,19 +761,28 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
     };
 
     const handleEndpointToggle = (apiName, apiId, methodName) => {
-        setOpenEndpoints((prev) => ({
-            ...prev,
-            [apiName]: true, 
-        }));
-        setEndpoint(methodName);
+        // Only toggle if clicking the API name (not an endpoint)
+        if (!methodName) {
+            setOpenEndpoints(prev => ({
+                ...prev,
+                [apiName]: !prev[apiName] // Toggle only for API name clicks
+            }));
+        } else {
+            // For endpoint clicks, ensure menu stays open
+            setOpenEndpoints(prev => ({
+                ...prev,
+                [apiName]: true
+            }));
+        }
+    
+        setEndpoint(methodName || apiName);
         setActiveTab("operations");
-
         setSelectedApiName(apiName);
-
+    
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
         navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
     };
-
+    
     const handleListItemClick = (selectedId, path, apiId) => {
         setSelectedIndex(selectedId);
         handleDrawerToggle();
@@ -878,7 +887,7 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                                             alignItems: "center",
                                                                             borderRadius: "8px",
                                                                         }}
-                                                                        onClick={() =>{
+                                                                        onClick={() => {
                                                                             handleEndpointToggle(api.name, api.id, methodObj.name);
                                                                             handleListItemClick(
                                                                                 `${api.name}-${endpointIndex}-${methodObj.name}`,
@@ -940,8 +949,8 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                     <ListItemIcon sx={{ minWidth: 40, color: selectedIndex === index ? "#fff" : "inherit" }}>
                                         {item.icon}
                                     </ListItemIcon>
-                                    <ListItemText 
-                                        primary={item.text} 
+                                    <ListItemText
+                                        primary={item.text}
                                         primaryTypographyProps={{
                                             color: selectedIndex === index ? "#fff" : "inherit"
                                         }}

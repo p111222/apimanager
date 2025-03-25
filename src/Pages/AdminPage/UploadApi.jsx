@@ -27,6 +27,7 @@ const UploadApi = () => {
     formData.append("file", file);
   
     try {
+      // const response = await axiosPrivate.post("http://127.0.0.1:5000/api/create-apis", formData, {
       const response = await axiosPrivate.post("/create-apis", formData, {
         headers: {
           "Content-Type": "multipart/form-data",

@@ -37,10 +37,22 @@ const ApiDetailsPage = () => {
     const [expanded, setExpanded] = useState('');
     const operationsAccordionRef = React.useRef(null);
 
+    // useEffect(() => {
+    //     if (apiId && endpoint && operationsAccordionRef.current) {
+    //         setTimeout(() => {
+    //             operationsAccordionRef.current.scrollIntoView({
+    //                 behavior: 'smooth',
+    //                 block: 'center'
+    //             });
+    //             setExpanded('operations');
+    //         }, 100);
+    //     }
+    // }, [apiId, endpoint]);
+
     useEffect(() => {
         if (apiId && endpoint && operationsAccordionRef.current) {
             setTimeout(() => {
-                operationsAccordionRef.current.scrollIntoView({
+                operationsAccordionRef.current?.scrollIntoView({ // Added optional chaining
                     behavior: 'smooth',
                     block: 'center'
                 });
@@ -522,7 +534,6 @@ const ApiDetailsPage = () => {
                                 </Box>
                             </AccordionDetails>
                         </Accordion>
-                        {/* <Divider sx={{ marginY: 2 }} /> */}
                     </>
                 )}
 
