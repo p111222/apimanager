@@ -369,18 +369,22 @@ const ApiDetailsPage = () => {
                             display: 'grid',
                             gridTemplateColumns: 'minmax(120px, max-content) 1fr',
                             gap: '12px 8px',
-                            alignItems: 'baseline'
+                            alignItems: 'baseline',
                         }}>
                             <Typography variant="body1" sx={{
                                 fontWeight: 500,
                                 color: '#00796b',
-                                alignSelf: 'center'
+                                alignSelf: 'center',
+                                textAlign: 'left',
+                                display: 'block',
                             }}>
                                 Name:
                             </Typography>
                             <Typography variant="body1" sx={{
                                 color: '#424242',
-                                paddingLeft: '4px' // Reduced padding to move the value closer
+                                paddingLeft: '4px',
+                                textAlign: 'left',
+                                display: 'block',
                             }}>
                                 {apiDetails.name}
                             </Typography>
@@ -389,7 +393,9 @@ const ApiDetailsPage = () => {
                                 fontWeight: 500,
                                 color: '#00796b',
                                 alignSelf: 'flex-start',
-                                pt: 1
+                                pt: 1,
+                                textAlign: 'left',
+                                display: 'block',
                             }}>
                                 Description:
                             </Typography>
@@ -458,11 +464,13 @@ const ApiDetailsPage = () => {
                                         <Typography
                                             variant="body1"
                                             sx={{
-                                                marginLeft: '35px',
+                                                // marginLeft: '35px',
                                                 whiteSpace: 'pre-wrap',
                                                 wordBreak: 'break-word',
                                                 lineHeight: '1.8',
-                                                color: '#424242'
+                                                color: '#424242',
+                                                textAlign: 'left',
+                                                display: 'block',
                                             }}
                                         >
                                             {apiDetails.description || "No description available"}
@@ -488,7 +496,6 @@ const ApiDetailsPage = () => {
                                 )}
                             </Box>
 
-                            {/* Other fields */}
                             {[
                                 { label: 'Provider', value: apiDetails.provider },
                                 { label: 'Type', value: apiDetails.type },
@@ -500,19 +507,24 @@ const ApiDetailsPage = () => {
                                     <Typography variant="body1" sx={{
                                         fontWeight: 500,
                                         color: '#00796b',
-                                        alignSelf: 'center'
+                                        alignSelf: 'center',
+                                        textAlign: 'left',
+                                        display: 'block',
                                     }}>
                                         {item.label}:
                                     </Typography>
                                     <Typography variant="body1" sx={{
                                         color: '#424242',
-                                        paddingLeft: '4px' // Reduced padding to move the value closer
+                                        paddingLeft: '4px',
+                                        textAlign: 'left',
+                                        display: 'block',
                                     }}>
                                         {item.value}
                                     </Typography>
                                 </React.Fragment>
                             ))}
                         </Box>
+
                     </AccordionDetails>
                 </Accordion>
 
