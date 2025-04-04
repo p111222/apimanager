@@ -54,8 +54,8 @@ const ApiLayout = () => {
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-      const response = await axiosPrivate.get("/getAll");
+      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      // const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );
@@ -64,8 +64,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        // "http://localhost:8083/token",  
-        "/token",
+        "http://localhost:8083/token",  
+        // "/token",
         null,
         {
           headers: {
@@ -105,8 +105,8 @@ const ApiLayout = () => {
       let combinedResults = [];
       for (const field of searchFields) {
         const response = await axiosPrivate.get(
-          // `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
-          `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          // `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -166,8 +166,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-      const response = await axiosPrivate.get(`/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,

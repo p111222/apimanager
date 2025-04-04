@@ -103,8 +103,8 @@ const ApiDetailsPage = () => {
     const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: 'image/*' });
 
     const { data: apiDetails, isLoading, error } = useQuery(['apiDetails', apiId], async () => {
-        // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-        const response = await axiosPrivate.get(`/getapi/${apiId}`);
+        const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+        // const response = await axiosPrivate.get(`/getapi/${apiId}`);
         return response.data;
     });
 
@@ -119,8 +119,8 @@ const ApiDetailsPage = () => {
     const getBearerToken = async () => {
         try {
             const response = await axiosPrivate.get(
-                // "http://localhost:8083/token",
-                "/token",  
+                "http://localhost:8083/token",
+                // "/token",  
                 null,
                 {
                     headers: {
@@ -180,8 +180,8 @@ const ApiDetailsPage = () => {
             // `/am/publisher/v4/apis/${apiId}`,
             const response = await axiosPrivate.put(
                 // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
-                // `http://localhost:8085/api/${apiId}`,
-                `/${apiId}`,
+                `http://localhost:8085/api/${apiId}`,
+                // `/${apiId}`,
                 updatedData,
                 {
                     headers: {
