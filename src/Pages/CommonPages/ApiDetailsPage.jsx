@@ -21,6 +21,7 @@ import { AuthContext } from '../../Context/AuthContext';
 import EditIcon from "@mui/icons-material/Edit";
 
 const ApiDetailsPage = () => {
+
     // const { apiId } = useParams();
     const { user } = useContext(AuthContext);
     const isAdmin = user?.roles?.includes("admin");
@@ -37,22 +38,14 @@ const ApiDetailsPage = () => {
     const [expanded, setExpanded] = useState('');
     const operationsAccordionRef = React.useRef(null);
 
-    // useEffect(() => {
-    //     if (apiId && endpoint && operationsAccordionRef.current) {
-    //         setTimeout(() => {
-    //             operationsAccordionRef.current.scrollIntoView({
-    //                 behavior: 'smooth',
-    //                 block: 'center'
-    //             });
-    //             setExpanded('operations');
-    //         }, 100);
-    //     }
-    // }, [apiId, endpoint]);
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [activeTab]);
 
     useEffect(() => {
         if (apiId && endpoint && operationsAccordionRef.current) {
             setTimeout(() => {
-                operationsAccordionRef.current?.scrollIntoView({ // Added optional chaining
+                operationsAccordionRef.current?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'center'
                 });
@@ -67,9 +60,6 @@ const ApiDetailsPage = () => {
             setExpanded('operations');
         }
     }, [activeTab]);
-
-    console.log("expanded" + expanded);
-
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -194,7 +184,7 @@ const ApiDetailsPage = () => {
             console.log("API Updated Successfully:", response.data);
             alert("API details updated successfully!");
 
-            setEditingDescription(false);  // Close the editing mode
+            setEditingDescription(false);  
 
 
         } catch (error) {
@@ -202,7 +192,6 @@ const ApiDetailsPage = () => {
             alert("Error updating API details");
         }
     };
-
 
     const handleTargetClick = (path, apiId) => {
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";

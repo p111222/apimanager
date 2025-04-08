@@ -54,8 +54,8 @@ const ApiLayout = () => {
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-      // const response = await axiosPrivate.get("/getAll");
+      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );
@@ -64,8 +64,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        "http://localhost:8083/token",  
-        // "/token",
+        // "http://localhost:8083/token",
+        "/token",
         null,
         {
           headers: {
@@ -106,6 +106,7 @@ const ApiLayout = () => {
       for (const field of searchFields) {
         const response = await axiosPrivate.get(
           `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+          // `http://api.kriate.co.in:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
           // `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
           {
             headers: {
@@ -166,8 +167,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-      // const response = await axiosPrivate.get(`/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,
@@ -214,6 +215,39 @@ const ApiLayout = () => {
   const isItUser = user?.roles?.includes("itUser");
 
   // Define menu items based on role
+  // const menuItems = [
+  //   {
+  //     text: "API Dashboard",
+  //     icon: <ApiIcon />,
+  //     path: isAdmin ? "/admin/apidashboard" : "/user/apidashboard",
+  //   },
+  //   {
+  //     text: "List of APIs",
+  //     icon: <DashboardIcon />,
+  //     apis: apiList,
+  //   },
+  //   {
+  //     text: "List of Categories",
+  //     icon: <CategoryIcon />,
+  //     path: isAdmin ? "/admin/allcategories" : "/user/allcategories",
+  //     categories: [
+  //       { name: "Account Services", apis: [] },
+  //       { name: "Cards", apis: [] },
+  //       { name: "Payments and Collections", apis: [] },
+  //       { name: "Loans", apis: [] },
+  //       { name: "Others", apis: [] },
+  //       { name: "FX Remittance", apis: [] },
+  //       { name: "Collections and Acquiring", apis: [] },
+  //       { name: "INR Remittance", apis: [] },
+  //       { name: "Payments", apis: [] },
+  //     ],
+  //   },
+  //   ...(isAdmin
+  //     ? [{ text: "Upload APIs", icon: <PublishIcon />, path: "/admin/uploadapi" }]
+  //     : []),
+  // ];
+
+  // Modify your menuItems definition to this:
   const menuItems = [
     {
       text: "API Dashboard",
@@ -223,27 +257,55 @@ const ApiLayout = () => {
     {
       text: "List of APIs",
       icon: <DashboardIcon />,
-      apis: apiList,
+      apis: apiList, // Flat API list view
     },
     {
       text: "List of Categories",
       icon: <CategoryIcon />,
-      path: isAdmin ? "/admin/allcategories" : "/user/allcategories",
       categories: [
-        { name: "Technology", path: "/categories/technology" },
-        { name: "Health", path: "/categories/health" },
-        { name: "Finance", path: "/categories/finance" },
-      ],
+        {
+          name: "Account Services",
+          apis: apiList // Show all APIs in each category
+        },
+        {
+          name: "Cards",
+          apis: apiList
+        },
+        {
+          name: "Payments and Collections",
+          apis: apiList
+        },
+        {
+          name: "Loans",
+          apis: apiList
+        },
+        {
+          name: "Others",
+          apis: apiList
+        },
+        {
+          name: "FX Remittance",
+          apis: apiList
+        },
+        {
+          name: "Collections and Acquiring",
+          apis: apiList
+        },
+        {
+          name: "INR Remittance",
+          apis: apiList
+        },
+        {
+          name: "Payments",
+          apis: apiList
+        }
+      ]
     },
-    // Conditionally render "Upload APIs" for Admin users only
-    ...(isAdmin
-      ? [{ text: "Upload APIs", icon: <PublishIcon />, path: "/admin/uploadapi" }]
-      : []),
-    // {
-    //   text: "Create a Team",
-    //   icon: <GroupIcon />,
-    //   path: "/admin/createteam",
-    // },
+    ...(isAdmin ? [{
+      text: "Upload APIs",
+      icon: <PublishIcon />,
+      path: "/admin/uploadapi"
+    }] : []),
   ];
 
   const handleDrawerToggle = () => {

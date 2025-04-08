@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import Slider from 'react-slick';
 import { Card, CardContent, Typography, Avatar, Box } from '@mui/material';
@@ -15,7 +15,10 @@ const ApiDashboard = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  // Fetching APIs from the backend using react-query
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const { data: apiList, isLoading, error } = useQuery('apiList', async () => {
     const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
     // const response = await axiosPrivate.get("/getAll");
