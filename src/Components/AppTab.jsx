@@ -324,8 +324,6 @@
 
 // export default AppTab;
 
-
-
 import React, { useState, useContext, useEffect } from "react";
 import { Box, Typography, Paper, Divider, Chip } from "@mui/material";
 import { AuthContext } from '../Context/AuthContext';
@@ -339,13 +337,11 @@ const AppTab = ({ apiDetails }) => {
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
   const { apiId } = useParams();
-
-  // State for description editing
   const [editingDescription, setEditingDescription] = useState(false);
   const [description, setDescription] = useState("");
   const { selectedApiName } = useContext(ApiEndpointContext);
 
-  console.log("appTab component for apiDetails" + JSON.stringify(apiDetails));
+  console.log("apiDetails: " + JSON.stringify(apiDetails, null, 2));
 
   useEffect(() => {
     if (apiDetails?.description) {
@@ -353,10 +349,8 @@ const AppTab = ({ apiDetails }) => {
     }
   }, [apiDetails]);
 
-  // Toggle Edit Mode
   const toggleEditing = () => setEditingDescription(!editingDescription);
 
-  // Utility function to get the Bearer token
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
@@ -369,7 +363,7 @@ const AppTab = ({ apiDetails }) => {
           },
         }
       );
-      console.log("Generated Bearer Token:", response.data.access_token);  // Print the token
+      console.log("Generated Bearer Token:", response.data.access_token);
       return response.data.access_token;
     } catch (error) {
       console.error("Error fetching Bearer token:", error.response?.data || error.message);
@@ -377,7 +371,6 @@ const AppTab = ({ apiDetails }) => {
     }
   };
 
-  // Handle Update
   const handleUpdate = async () => {
     if (!apiId) {
       console.error("API ID is not available.");
@@ -387,14 +380,12 @@ const AppTab = ({ apiDetails }) => {
 
     try {
       const token = await getBearerToken();
-      // Fallback values for essential fields
       const name = apiDetails?.info?.title || apiDetails?.name || "Default API Name";
       const version = apiDetails?.info?.version || apiDetails?.version || "1.0.0";
       const context = apiDetails?.context || "/default-context";
       const provider = apiDetails?.provider || "default-provider";
       const lifeCycleStatus = apiDetails?.lifeCycleStatus || "CREATED";
 
-      // Extracting operations from apiDetails.paths
       const operations = Object.keys(apiDetails?.paths || {}).flatMap((path) =>
         Object.keys(apiDetails.paths[path]).map((method) => ({
           target: path,
@@ -404,7 +395,6 @@ const AppTab = ({ apiDetails }) => {
         }))
       );
 
-      // Check if operations array is not empty
       if (operations.length === 0) {
         console.error("No valid operations found for the API.");
         alert("API must have at least one resource defined.");
@@ -421,12 +411,10 @@ const AppTab = ({ apiDetails }) => {
         operations,
       };
 
-      console.log("Updated Data Payload:", updatedData);
-
       const response = await axiosPrivate.put(
         // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
-        `/am/publisher/v4/apis/${apiId}`,
-        // `/${apiId}`,
+        // `/am/publisher/v4/apis/${apiId}`,
+        `/${apiId}`,
         updatedData,
         {
           headers: {
@@ -439,7 +427,6 @@ const AppTab = ({ apiDetails }) => {
       console.log("API Updated Successfully:", response.data);
       alert("API details updated successfully!");
 
-      // Fetch the updated details to update the UI
       await fetchDescription();
 
       setEditingDescription(false);
@@ -450,13 +437,12 @@ const AppTab = ({ apiDetails }) => {
     }
   };
 
-  // Function to fetch the description from the new API endpoint
   const fetchDescription = async () => {
     try {
       const fetchResponse = await axiosPrivate.get(
         // `http://localhost:8081/api/getapi/${apiId}`
         `/getapi/${apiId}`
-     );
+      );
 
       const initialDescription = fetchResponse.data?.description || "No description available";
       setDescription(initialDescription);
@@ -465,21 +451,27 @@ const AppTab = ({ apiDetails }) => {
     }
   };
 
-  // Initial description fetch on component mount
   useEffect(() => {
     if (apiId) fetchDescription();
   }, [apiId]);
 
   useEffect(() => {
-    // console.log("apiDetails (on change):", apiDetails);
   }, [apiDetails]);
 
   if (!apiDetails) return <Typography>Please Select an API to view additional details</Typography>;
 
   // Extracting necessary fields from apiDetails
-  const endpoint = Object.keys(apiDetails.paths)[0];
-  const operation = apiDetails.paths[endpoint]?.post || apiDetails.paths[endpoint]?.get;
-  const method = operation ? (apiDetails.paths[endpoint]?.post ? "POST" : "GET") : "N/A";
+  // const endpoint = Object.keys(apiDetails.paths)[0];
+  // const operation = apiDetails.paths[endpoint]?.post || apiDetails.paths[endpoint]?.get;
+  // const method = operation ? (apiDetails.paths[endpoint]?.post ? "POST" : "GET") : "N/A";
+
+  const endpointPath = Object.keys(apiDetails.paths)[0];
+  const endpointOperations = apiDetails.paths[endpointPath];
+  const methods = Object.keys(endpointOperations).map(method => method.toUpperCase());
+  const primaryMethod = methods[0] || "GET";
+
+  // Get the first operation (POST in your case)
+  const operation = endpointOperations[methods[0].toLowerCase()] || {};
 
   const headers = operation?.parameters?.filter((param) => param.in === "header") || [];
   const queryParams = operation?.parameters?.filter((param) => param.in === "query") || [];
@@ -498,22 +490,8 @@ const AppTab = ({ apiDetails }) => {
         textAlign: "left",
       }}
     >
-      {/* API Name */}
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
-        {selectedApiName || apiDetails?.info?.title || "API Title Not Available"}
-      </Typography>
 
-      {/* API Description */}
-      <Box display="flex" alignItems="center" gap={1} sx={{ mb: 2 }}>
-        <Typography variant="body1" color="text.secondary" sx={{ flex: 1 }}>
-          {description || "No description available"}
-        </Typography>
-      </Box>
-
-      <Divider sx={{ mb: 2 }} />
-
-      {/* Request Type & Endpoint */}
-      <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
+      {/* <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
         <Chip
           label={method.toUpperCase()}
           color={method.toUpperCase() === "GET" ? "success" : "primary"}
@@ -522,15 +500,30 @@ const AppTab = ({ apiDetails }) => {
         <Typography variant="body1" fontFamily="monospace">
           {endpoint}
         </Typography>
+      </Box> */}
+
+      <Box display="flex" alignItems="center" gap={2} sx={{ mb: 2 }}>
+        <Chip
+          label={primaryMethod}
+          color={
+            primaryMethod === "GET" ? "success" :
+              primaryMethod === "POST" ? "primary" :
+                primaryMethod === "PUT" ? "warning" :
+                  primaryMethod === "DELETE" ? "error" :
+                    primaryMethod === "PATCH" ? "secondary" : "default"
+          }
+          sx={{ fontWeight: "bold", fontSize: "14px" }}
+        />
+        <Typography variant="body1" fontFamily="monospace">
+          {Object.keys(apiDetails.paths)[0]}
+        </Typography>
       </Box>
 
-      {/* Parameters (Headers, Query, Path, Body) */}
       <Paper sx={{ p: 2, mb: 2, backgroundColor: "#f9f9f9" }}>
         <Typography variant="h6" fontWeight="bold">
           Request Details
         </Typography>
 
-        {/* Headers */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
           Headers:
         </Typography>
@@ -562,7 +555,6 @@ const AppTab = ({ apiDetails }) => {
           </Typography>
         )}
 
-        {/* Path Params */}
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
           Path Parameters:
         </Typography>

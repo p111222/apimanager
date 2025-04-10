@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -50,15 +49,18 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
         }
     };
 
+    const handleCategoryNameClick = (categoryName) => {
+        const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+        navigate(`/${pathPrefix}/category-details/${encodeURIComponent(categoryName)}`);
+    };
+
     const handleCategoryItemToggle = (categoryName, apiId = null) => {
         if (!apiId) {
-            // Toggle category's API list
             setOpenCategoryItems(prev => ({
                 ...prev,
                 [categoryName]: !prev[categoryName]
             }));
         } else {
-            // Toggle specific API's endpoints
             setOpenEndpoints(prev => ({
                 ...prev,
                 [apiId]: !prev[apiId]
@@ -66,15 +68,14 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
         }
     };
 
+
     const handleEndpointToggle = (apiName, apiId, methodName) => {
-        // Only toggle if clicking the API name (not an endpoint)
         if (!methodName) {
             setOpenEndpoints(prev => ({
                 ...prev,
-                [apiName]: !prev[apiName] // Toggle only for API name clicks
+                [apiName]: !prev[apiName] 
             }));
         } else {
-            // For endpoint clicks, ensure menu stays open
             setOpenEndpoints(prev => ({
                 ...prev,
                 [apiName]: true
@@ -298,7 +299,7 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                             {item.categories?.map((category, catIndex) => (
                                                 <div key={catIndex}>
                                                     <ListItem disablePadding sx={{ marginY: 1 }}>
-                                                        <ListItemButton
+                                                        {/* <ListItemButton
                                                             sx={{
                                                                 pl: 4,
                                                                 backgroundColor: openCategoryItems[category.name] ? "#e6e6e6" : "transparent",
@@ -315,6 +316,36 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                                 {category.name}
                                                             </Typography>
                                                             {openCategoryItems[category.name] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                                        </ListItemButton> */}
+                                                        <ListItemButton
+                                                            sx={{
+                                                                pl: 4,
+                                                                backgroundColor: openCategoryItems[category.name] ? "#e6e6e6" : "transparent",
+                                                                borderRadius: "8px",
+                                                                transition: "background-color 0.3s ease",
+                                                                "&:hover": { backgroundColor: "#e6e6e6" },
+                                                            }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent the toggle from happening
+                                                                handleCategoryNameClick(category.name);
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{
+                                                                    fontWeight: "bold",
+                                                                    color: "#333",
+                                                                    cursor: "pointer" // Add pointer cursor
+                                                                }}
+                                                            >
+                                                                {category.name}
+                                                            </Typography>
+                                                            <Box onClick={(e) => {
+                                                                e.stopPropagation(); // Isolate the expand/collapse click
+                                                                handleCategoryItemToggle(category.name);
+                                                            }}>
+                                                                {openCategoryItems[category.name] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                                            </Box>
                                                         </ListItemButton>
                                                     </ListItem>
                                                     <Collapse in={openCategoryItems[category.name]} timeout="auto" unmountOnExit>
@@ -329,11 +360,13 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                                                 borderRadius: "8px",
                                                                                 "&:hover": { backgroundColor: "#e0f7fa" },
                                                                             }}
-                                                                            onClick={() => handleCategoryItemToggle(category.name, api.id)}
+                                                                            // onClick={() => handleCategoryItemToggle(category.name, api.id)}
+                                                                            onClick={(e) => handleCategoryItemToggle(category.name, api.id, e)}
+
                                                                         >
                                                                             <Typography
                                                                                 variant="body2"
-                                                                                sx={{ fontWeight: "500", color: "#333" }}
+                                                                                sx={{ fontWeight: "500", color: "#333", cursor: "pointer" }}
                                                                             >
                                                                                 {api.name}
                                                                             </Typography>

@@ -18,6 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Box } from '@mui/material';
 import InvalidSessionModal from './Components/InvalidSessionModal.jsx';
 import MyProfile from './Pages/CommonPages/MyProfile.jsx';
+import CategoryDetailsPage from './Pages/CommonPages/CategoryDetailsPage.jsx';
 
 const App = () => {
   const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
@@ -133,6 +134,7 @@ const App = () => {
         // { path: '/admin/createteam', element: <CreateTeam /> },
         { path: '/admin/api-details/:apiId', element: <ApiDetailsPage /> },
         { path: '/admin/my-profile', element: <MyProfile /> },
+        { path: "/admin/category-details/:categoryName", element: <CategoryDetailsPage />, }
 
       ],
     },
@@ -149,6 +151,7 @@ const App = () => {
         { path: '/user/allcategories', element: <ListofCategories /> },
         { path: '/user/api-details/:apiId', element: <ApiDetailsPage /> },
         { path: '/user/my-profile', element: <MyProfile /> },
+        { path: "/user/category-details/:categoryName", element: <CategoryDetailsPage />, }
 
       ],
     },

@@ -184,7 +184,7 @@ const ApiDetailsPage = () => {
             console.log("API Updated Successfully:", response.data);
             alert("API details updated successfully!");
 
-            setEditingDescription(false);  
+            setEditingDescription(false);
 
 
         } catch (error) {
@@ -330,8 +330,29 @@ const ApiDetailsPage = () => {
                 }}
             >
 
+                <Accordion defaultExpanded>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#ffecb3' }}>
+                        <Security color="action" sx={{ marginRight: 1 }} />
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>Security & Access</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography variant="body2"><strong>Authorization Header:</strong> {apiDetails.authorizationHeader}</Typography>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginTop: 1 }}>
+                            {apiDetails.securityScheme?.map((scheme, index) => (
+                                <Chip key={index} label={scheme} 
+                                sx={{
+                                    backgroundColor: '#4caf50', // Material green[500]
+                                    color: '#fff',              // White text
+                                  }} />
+                            ))}
+                        </Box>
+                    </AccordionDetails>
+                </Accordion>
+
+                <Divider sx={{ marginY: 2 }} />
+
                 <Accordion
-                    defaultExpanded
+                    // defaultExpanded
                     onChange={handleAccordionChange('general')}
                 >
                     <AccordionSummary
@@ -540,7 +561,7 @@ const ApiDetailsPage = () => {
                     </>
                 )}
 
-                <Divider sx={{ marginY: 2 }} />
+                {/* <Divider sx={{ marginY: 2 }} />
 
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e3f2fd' }}>
@@ -557,11 +578,11 @@ const ApiDetailsPage = () => {
                             {apiDetails.endpointConfig?.production_endpoints?.url || 'N/A'}
                         </Paper>
                     </AccordionDetails>
-                </Accordion>
+                </Accordion> */}
 
-                <Divider sx={{ marginY: 2 }} />
+                {/* <Divider sx={{ marginY: 2 }} /> */}
 
-                <Accordion>
+                {/* <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#ffecb3' }}>
                         <Security color="action" sx={{ marginRight: 1 }} />
                         <Typography variant="h6" sx={{ fontWeight: 600 }}>Security & Access</Typography>
@@ -574,7 +595,7 @@ const ApiDetailsPage = () => {
                             ))}
                         </Box>
                     </AccordionDetails>
-                </Accordion>
+                </Accordion> */}
 
                 <Divider sx={{ marginY: 2 }} />
 
@@ -587,6 +608,25 @@ const ApiDetailsPage = () => {
                         {apiId && endpoint && (
                             <ApiView apiId={apiId} endpoint={endpoint} />
                         )}
+                    </AccordionDetails>
+                </Accordion>
+
+                <Divider sx={{ marginY: 2 }} />
+
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ backgroundColor: '#e3f2fd' }}>
+                        <Storage color="secondary" sx={{ marginRight: 1 }} />
+                        <Typography variant="h6" sx={{ fontWeight: 600 }}>Endpoints</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography variant="body2"><strong>Sandbox Endpoint:</strong></Typography>
+                        <Paper sx={{ padding: 1, backgroundColor: '#e8f5e9', marginBottom: 1 }}>
+                            {apiDetails.endpointConfig?.sandbox_endpoints?.url || 'N/A'}
+                        </Paper>
+                        <Typography variant="body2"><strong>Production Endpoint:</strong></Typography>
+                        <Paper sx={{ padding: 1, backgroundColor: '#e8f5e9' }}>
+                            {apiDetails.endpointConfig?.production_endpoints?.url || 'N/A'}
+                        </Paper>
                     </AccordionDetails>
                 </Accordion>
 

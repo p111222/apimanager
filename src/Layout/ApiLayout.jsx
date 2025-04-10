@@ -49,6 +49,8 @@ const ApiLayout = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Fetch API List
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
@@ -78,6 +80,43 @@ const ApiLayout = () => {
     } catch (error) {
       console.error("Error fetching Bearer token:", error.response?.data || error.message);
       throw new Error("Failed to obtain Bearer token");
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const token = await getBearerToken();
+      // const response = await axiosPrivate.get(
+      //     'https://43.204.108.73:8344/api/am/publisher/v4/api-categories',
+      //     {
+      //         headers: {
+      //             Authorization: `Bearer ${token}`
+      //         }
+      //     }
+      // );
+      const response = await axiosPrivate.get(
+        // 'http://localhost:8086/api/categories'
+        '/categories'
+      );
+      return response.data.list;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return [];
+    }
+  };
+
+  const fetchApisForCategory = async (categoryName) => {
+    try {
+
+      const response = await axiosPrivate.get(
+        // `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
+        `/category-details?category=${encodeURIComponent(categoryName)}`
+      );
+
+      return response.data.list || [];
+    } catch (error) {
+      console.error(`Error fetching APIs for category ${categoryName}:`, error);
+      return [];
     }
   };
 
@@ -201,7 +240,85 @@ const ApiLayout = () => {
     fetchApiList();
   }, [apiData]);
 
-  if (apiDataLoading) return (
+  // Load all data
+  useEffect(() => {
+    const loadAllData = async () => {
+      setLoading(true);
+
+      // 1. Fetch all categories
+      const categoryList = await fetchCategories();
+
+      // 2. For each category, fetch its APIs
+      const categoriesWithApis = await Promise.all(
+        categoryList.map(async (category) => {
+          const apis = await fetchApisForCategory(category.name);
+
+          // 3. For each API, fetch its details/endpoints
+          const apisWithDetails = await Promise.all(
+            apis.map(async (api) => {
+              const methods = await fetchApiDetails(api.id);
+              return {
+                id: api.id,
+                name: api.name,
+                description: api.description,
+                endpoints: [{
+                  name: api.name,
+                  method: methods.map(m => ({
+                    name: m.name,
+                    method: m.method
+                  }))
+                }]
+              };
+            })
+          );
+
+          return {
+            id: category.id,
+            name: category.name,
+            description: category.description,
+            apis: apisWithDetails
+          };
+        })
+      );
+
+      setCategories(categoriesWithApis);
+      setLoading(false);
+    };
+
+    loadAllData();
+  }, []);
+
+  // Prepare menu items for DrawerComponent
+  const getMenuItems = () => {
+    return [
+      {
+        text: "API Dashboard",
+        icon: <ApiIcon />,
+        path: isAdmin ? "/admin/apidashboard" : "/user/apidashboard",
+      },
+      {
+        text: "List of APIs",
+        icon: <DashboardIcon />,
+        apis: categories.flatMap(category => category.apis), // Flatten all APIs for the "List of APIs" view
+      },
+      {
+        text: "List of Categories",
+        icon: <CategoryIcon />,
+        categories: categories.map(category => ({
+          name: category.name,
+          description: category.description,
+          apis: category.apis
+        }))
+      },
+      ...(isAdmin ? [{
+        text: "Upload APIs",
+        icon: <PublishIcon />,
+        path: "/admin/uploadapi"
+      }] : []),
+    ];
+  };
+
+  if (apiDataLoading || loading) return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
       <CircularProgress />
     </Box>
@@ -213,100 +330,6 @@ const ApiLayout = () => {
   // Determine the user role
   const isAdmin = user?.roles?.includes("admin");
   const isItUser = user?.roles?.includes("itUser");
-
-  // Define menu items based on role
-  // const menuItems = [
-  //   {
-  //     text: "API Dashboard",
-  //     icon: <ApiIcon />,
-  //     path: isAdmin ? "/admin/apidashboard" : "/user/apidashboard",
-  //   },
-  //   {
-  //     text: "List of APIs",
-  //     icon: <DashboardIcon />,
-  //     apis: apiList,
-  //   },
-  //   {
-  //     text: "List of Categories",
-  //     icon: <CategoryIcon />,
-  //     path: isAdmin ? "/admin/allcategories" : "/user/allcategories",
-  //     categories: [
-  //       { name: "Account Services", apis: [] },
-  //       { name: "Cards", apis: [] },
-  //       { name: "Payments and Collections", apis: [] },
-  //       { name: "Loans", apis: [] },
-  //       { name: "Others", apis: [] },
-  //       { name: "FX Remittance", apis: [] },
-  //       { name: "Collections and Acquiring", apis: [] },
-  //       { name: "INR Remittance", apis: [] },
-  //       { name: "Payments", apis: [] },
-  //     ],
-  //   },
-  //   ...(isAdmin
-  //     ? [{ text: "Upload APIs", icon: <PublishIcon />, path: "/admin/uploadapi" }]
-  //     : []),
-  // ];
-
-  // Modify your menuItems definition to this:
-  const menuItems = [
-    {
-      text: "API Dashboard",
-      icon: <ApiIcon />,
-      path: isAdmin ? "/admin/apidashboard" : "/user/apidashboard",
-    },
-    {
-      text: "List of APIs",
-      icon: <DashboardIcon />,
-      apis: apiList, // Flat API list view
-    },
-    {
-      text: "List of Categories",
-      icon: <CategoryIcon />,
-      categories: [
-        {
-          name: "Account Services",
-          apis: apiList // Show all APIs in each category
-        },
-        {
-          name: "Cards",
-          apis: apiList
-        },
-        {
-          name: "Payments and Collections",
-          apis: apiList
-        },
-        {
-          name: "Loans",
-          apis: apiList
-        },
-        {
-          name: "Others",
-          apis: apiList
-        },
-        {
-          name: "FX Remittance",
-          apis: apiList
-        },
-        {
-          name: "Collections and Acquiring",
-          apis: apiList
-        },
-        {
-          name: "INR Remittance",
-          apis: apiList
-        },
-        {
-          name: "Payments",
-          apis: apiList
-        }
-      ]
-    },
-    ...(isAdmin ? [{
-      text: "Upload APIs",
-      icon: <PublishIcon />,
-      path: "/admin/uploadapi"
-    }] : []),
-  ];
 
   const handleDrawerToggle = () => {
     setOpenDrawer(!openDrawer);
@@ -448,7 +471,9 @@ const ApiLayout = () => {
       <DrawerComponent
         openDrawer={openDrawer}
         handleDrawerToggle={handleDrawerToggle}
-        menuItems={menuItems}
+        // menuItems={menuItems}
+        menuItems={getMenuItems()}
+
       />
 
       <Main open={openDrawer} style={{ padding: '15px', marginTop: '50px' }}>

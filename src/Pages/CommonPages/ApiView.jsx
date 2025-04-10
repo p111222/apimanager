@@ -258,16 +258,13 @@
 // export default ApiView;
 
 import React, { useState, useEffect } from 'react';
-import BreadcrumbComponent from '../../Components/BreadcrumbComponent';
 import { Tabs, Tab, Box, MenuItem, Select, FormControl } from "@mui/material";
 import AppTab from '../../Components/AppTab';
 import ParamsTab from '../../Components/ParamsTab';
 import HeadersTab from '../../Components/HeadersTab';
 import BodyTab from '../../Components/BodyTab';
 import AuthorizationTab from '../../Components/AuthorizationTab';
-import { useLocation } from 'react-router-dom';
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
-import axios from 'axios';
 
 const ApiView = ({ apiId, endpoint }) => {
     const [selectedTab, setSelectedTab] = useState(0);
@@ -279,7 +276,6 @@ const ApiView = ({ apiId, endpoint }) => {
     const [errorResponse, setErrorResponse] = useState("");
     const axiosPrivate = useAxiosPrivate();
 
-    // Utility function to get the Bearer token
     const getBearerToken = async () => {
         try {
             const response = await axiosPrivate.get(
@@ -299,7 +295,7 @@ const ApiView = ({ apiId, endpoint }) => {
         }
     };
 
-    console.log("apiview" + apiId);
+    // console.log("apiview" + apiId);
 
 
     useEffect(() => {
