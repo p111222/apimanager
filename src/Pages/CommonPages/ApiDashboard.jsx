@@ -20,14 +20,14 @@ const ApiDashboard = () => {
   }, []);
 
   const { data: apiList, isLoading, error } = useQuery('apiList', async () => {
-    // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-    const response = await axiosPrivate.get("/getAll");
+    const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+    // const response = await axiosPrivate.get("/getAll");
     return response.data.list;
   });
 
   const { data: categories, isLoading: categoryLoading, error: categoryError } = useQuery('categories', async () => {
-    // const response = await axiosPrivate.get("http://localhost:8086/api/categories");
-    const response = await axiosPrivate.get("/categories");
+    const response = await axiosPrivate.get("http://localhost:8086/api/categories");
+    // const response = await axiosPrivate.get("/categories");
     return response.data.list;
   });
 

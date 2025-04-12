@@ -28,14 +28,13 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
-    marginLeft: drawerWidth, // Set margin to match drawer width
+    marginLeft: drawerWidth,
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   })
 );
-
 
 const ApiLayout = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -45,19 +44,26 @@ const ApiLayout = () => {
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
   const axiosPrivate = useAxiosPrivate();
-  const { user } = useContext(AuthContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user, loginTime } = useContext(AuthContext);
+
+  const formatLoginTime = () => {
+    if (!loginTime) return "Not available";
+
+    const loginDate = new Date(loginTime);
+    return `Logged in since ${loginDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  };
 
   // Fetch API List
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-      const response = await axiosPrivate.get("/getAll");
+      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      // const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );
@@ -66,8 +72,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        // "http://localhost:8083/token",
-        "/token",
+        "http://localhost:8083/token",
+        // "/token",
         null,
         {
           headers: {
@@ -95,8 +101,8 @@ const ApiLayout = () => {
       //     }
       // );
       const response = await axiosPrivate.get(
-        // 'http://localhost:8086/api/categories'
-        '/categories'
+        'http://localhost:8086/api/categories'
+        // '/categories'
       );
       return response.data.list;
     } catch (error) {
@@ -109,8 +115,8 @@ const ApiLayout = () => {
     try {
 
       const response = await axiosPrivate.get(
-        // `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
-        `/category-details?category=${encodeURIComponent(categoryName)}`
+        `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
+        // `/category-details?category=${encodeURIComponent(categoryName)}`
       );
 
       return response.data.list || [];
@@ -206,8 +212,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-      const response = await axiosPrivate.get(`/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,
@@ -442,10 +448,26 @@ const ApiLayout = () => {
             </Box>
 
 
+
             <div>
-              <div onClick={handleMenuOpen}>
-                <AccountCircle sx={{ width: "26px", height: "26px", cursor: "pointer" }} />
+
+              <div className="flex items-center">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'white',
+                    marginRight: 2,
+                    fontSize: '0.875rem',
+                    display: { xs: 'none', sm: 'block' } 
+                  }}
+                >
+                  {formatLoginTime()}
+                </Typography>
+                <div onClick={handleMenuOpen}>
+                  <AccountCircle sx={{ width: "26px", height: "26px", cursor: "pointer" }} />
+                </div>
               </div>
+
 
               <Menu
                 anchorEl={anchorEl}
@@ -468,18 +490,43 @@ const ApiLayout = () => {
 
       </AppBar>
 
-      <DrawerComponent
-        openDrawer={openDrawer}
-        handleDrawerToggle={handleDrawerToggle}
-        // menuItems={menuItems}
-        menuItems={getMenuItems()}
+      <div>
 
-      />
+        <DrawerComponent
+          openDrawer={openDrawer}
+          handleDrawerToggle={handleDrawerToggle}
+          menuItems={getMenuItems()}
 
-      <Main open={openDrawer} style={{ padding: '15px', marginTop: '50px' }}>
-        <Outlet />
-      </Main>
+        />
+
+        <Main open={openDrawer} style={{ padding: '15px', marginTop: '50px' }}>
+          <Outlet />
+        </Main>
+      </div>
+
+
+      <div >
+        <footer className="bg-gray-900 py-3 px-4 text-center border-t border-gray-700">
+          <div className="container mx-auto flex justify-between items-center">
+            <Typography variant="caption" className="text-gray-400">
+              © {new Date().getFullYear()} Nishkaiv APIM
+            </Typography>
+            <div className="flex space-x-4">
+              <Typography variant="caption" className="text-gray-500">
+                v1.0.0
+              </Typography>
+              <Typography variant="caption" className="text-gray-500">
+                All Rights Reserved
+              </Typography>
+            </div>
+          </div>
+        </footer>
+      </div>
+
+
     </div>
+
+
   );
 }
 

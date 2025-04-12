@@ -109,25 +109,20 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
             variant="permanent"
             open={true}
             onClose={handleDrawerToggle}
-            // sx={{
-            //     display: { xs: "none", sm: "block" },
-            //     "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth, marginTop: "64px" },
-            // }}
             sx={{
                 display: { xs: "none", sm: "block" },
                 "& .MuiDrawer-paper": {
                     boxSizing: "border-box",
                     width: drawerWidth,
                     marginTop: "64px",
-                    height: 'calc(100vh - 64px)',
+                    // height: 'calc(100vh - 64px)',
+                    height: 'calc(100vh - 64px - 60px)',
                     overflowY: 'auto',
-                    // Hide scrollbar for Chrome, Safari and Opera
                     '&::-webkit-scrollbar': {
                         display: 'none',
                     },
-                    // Hide scrollbar for IE, Edge and Firefox
-                    '-ms-overflow-style': 'none',  /* IE and Edge */
-                    'scrollbar-width': 'none',  /* Firefox */
+                    '-ms-overflow-style': 'none',  
+                    'scrollbar-width': 'none',  
                 },
             }}
         >

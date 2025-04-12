@@ -33,8 +33,8 @@ const CategoryDetailsPage = () => {
     const getBearerToken = async () => {
         try {
             const response = await axiosPrivate.get(
-                // "http://localhost:8083/token",
-                "/token",
+                "http://localhost:8083/token",
+                // "/token",
                 null,
                 {
                     headers: {
@@ -54,8 +54,8 @@ const CategoryDetailsPage = () => {
             try {
                 const token = await getBearerToken();
                 const response = await axiosPrivate.get(
-                    // `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
-                    `/category-details?category=${encodeURIComponent(categoryName)}`
+                    `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
+                    // `/category-details?category=${encodeURIComponent(categoryName)}`
                 );
                 setApis(response.data.list || []);
             } catch (error) {
@@ -205,7 +205,6 @@ const CategoryDetailsPage = () => {
                     </AccordionDetails>
                 </Accordion>
 
-                {/* API Count Section */}
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -231,8 +230,6 @@ const CategoryDetailsPage = () => {
 
                 <Divider sx={{ marginBottom: 1}} />
 
-                {/* API List */}
-                {/* API List */}
                 {apis.map(api => (
                     <Paper
                         key={api.id}
@@ -244,12 +241,12 @@ const CategoryDetailsPage = () => {
                                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                                 cursor: 'pointer'
                             },
-                            textAlign: 'left' // Added this to ensure all content is left-aligned
+                            textAlign: 'left' 
                         }}
                     >
                         <Typography variant="h6" sx={{
                             color: '#00796b',
-                            textAlign: 'left' // Explicit left alignment for name
+                            textAlign: 'left' 
                         }}>
                             {api.name}
                         </Typography>
@@ -257,7 +254,7 @@ const CategoryDetailsPage = () => {
                             mt: 1,
                             color: '#616161',
                             whiteSpace: 'pre-line',
-                            textAlign: 'left' // Explicit left alignment for description
+                            textAlign: 'left' 
                         }}>
                             {api.description || "No description available"}
                         </Typography>
