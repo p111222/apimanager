@@ -705,7 +705,8 @@ const ApiDetailsPage = () => {
     const { getRootProps, getInputProps } = useDropzone({ onDrop, accept: 'image/*' });
 
     const { data: apiDetails, isLoading, error } = useQuery(['apiDetails', apiId], async () => {
-        const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+        // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+        const response = await axiosPrivate.get(`/getapi/${apiId}`);
         return response.data;
     });
 
@@ -719,7 +720,8 @@ const ApiDetailsPage = () => {
     const getBearerToken = async () => {
         try {
             const response = await axiosPrivate.get(
-                "http://localhost:8083/token",
+                // "http://localhost:8083/token",
+                "/token",
                 null,
                 {
                     headers: {
@@ -773,7 +775,8 @@ const ApiDetailsPage = () => {
             console.log("Updated Data Payload:", updatedData);
 
             const response = await axiosPrivate.put(
-                `http://localhost:8085/api/${apiId}`,
+                // `http://localhost:8085/api/${apiId}`,
+                `/${apiId}`,
                 updatedData,
                 {
                     headers: {
