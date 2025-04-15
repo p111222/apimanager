@@ -258,7 +258,7 @@
 // export default ApiView;
 
 import React, { useState, useEffect } from 'react';
-import { Tabs, Tab, Box, MenuItem, Select, FormControl } from "@mui/material";
+import { Tabs, Tab, Box, MenuItem, Select, FormControl, Typography, Button } from "@mui/material";
 import AppTab from '../../Components/AppTab';
 import ParamsTab from '../../Components/ParamsTab';
 import HeadersTab from '../../Components/HeadersTab';
@@ -296,7 +296,6 @@ const ApiView = ({ apiId, endpoint }) => {
     };
 
     // console.log("apiview" + apiId);
-
 
     useEffect(() => {
         const fetchApiDetails = async () => {
@@ -404,7 +403,11 @@ const ApiView = ({ apiId, endpoint }) => {
     };
 
     return (
-        <div>
+        <Box sx={{ 
+            width: '100%',
+            maxWidth: '100%',
+            overflowX: 'hidden' // This prevents horizontal scrolling
+        }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider", marginTop: '8px' }}>
                 <Tabs value={selectedTab} onChange={handleTabChange} aria-label="API Tabs">
                     <Tab label="App" />
@@ -414,9 +417,19 @@ const ApiView = ({ apiId, endpoint }) => {
                     <Tab label="Authorization" />
                 </Tabs>
             </Box>
-
-            <div className="flex mt-4">
-                <div className="w-1/2 p-1">
+    
+            <Box sx={{ 
+                display: 'flex', 
+                mt: 4,
+                flexDirection: { xs: 'column', md: 'row' }, // Stack on mobile, row on desktop
+                width: '100%'
+            }}>
+                {/* Left Panel - Tabs Content */}
+                <Box sx={{ 
+                    width: { xs: '100%', md: '50%' },
+                    p: 1,
+                    boxSizing: 'border-box' // Ensures padding is included in width calculation
+                }}>
                     <Box sx={{ padding: 1 }}>
                         {selectedTab === 0 && <AppTab apiDetails={apiDetails} />}
                         {selectedTab === 1 && <ParamsTab apiDetails={apiDetails} />}
@@ -424,42 +437,130 @@ const ApiView = ({ apiId, endpoint }) => {
                         {selectedTab === 3 && <BodyTab apiDetails={apiDetails} />}
                         {selectedTab === 4 && <AuthorizationTab apiDetails={apiDetails} />}
                     </Box>
-                </div>
-
-                <div className="w-1/2 p-4">
-                    <div className="bg-gray-800 p-3 rounded-lg mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-white text-sm font-semibold">API Request</h3>
-                            <button
-                                className="text-xs bg-gray-700 px-2 py-1 rounded text-white hover:bg-gray-600"
+                </Box>
+    
+                {/* Right Panel - Request/Response */}
+                <Box sx={{ 
+                    width: { xs: '100%', md: '50%' },
+                    p: { xs: 1, md: 2 },
+                    boxSizing: 'border-box'
+                }}>
+                    {/* API Request */}
+                    <Box sx={{ 
+                        bgcolor: 'grey.800', 
+                        p: 2, 
+                        borderRadius: 1, 
+                        mb: 2,
+                        width: '100%'
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            mb: 2 
+                        }}>
+                            <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 'bold' }}>
+                                API Request
+                            </Typography>
+                            <Button
+                                size="small"
+                                variant="contained"
                                 onClick={() => copyToClipboard(curlCommand, "request")}
+                                sx={{ 
+                                    bgcolor: 'grey.700',
+                                    color: 'white',
+                                    '&:hover': { bgcolor: 'grey.600' },
+                                    minWidth: 0,
+                                    padding: '4px 8px',
+                                    fontSize: '0.75rem'
+                                }}
                             >
                                 {copied.request ? "✅ Copied" : "📋 Copy"}
-                            </button>
-                        </div>
-                        <div className="bg-gray-900 text-yellow-400 p-4 rounded-md text-sm font-mono h-40 overflow-y-auto custom-scrollbar">
-                            <pre className="text-left">{curlCommand}</pre>
-                        </div>
-                    </div>
-
-                    <div className="bg-gray-800 p-3 rounded-lg mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-white text-sm font-semibold">API Response</h3>
-                            <button
-                                className="text-xs bg-gray-700 px-2 py-1 rounded text-white hover:bg-gray-600"
+                            </Button>
+                        </Box>
+                        <Box sx={{ 
+                            bgcolor: 'grey.900', 
+                            color: 'warning.light', 
+                            p: 2, 
+                            borderRadius: 1,
+                            height: 160,
+                            overflow: 'auto'
+                        }}>
+                            <pre style={{ 
+                                margin: 0,
+                                whiteSpace: 'pre-wrap',
+                                wordBreak: 'break-word' // This ensures long lines wrap
+                            }}>
+                                {curlCommand}
+                            </pre>
+                        </Box>
+                    </Box>
+    
+                    {/* API Response */}
+                    <Box sx={{ 
+                        bgcolor: 'grey.800', 
+                        p: 2, 
+                        borderRadius: 1, 
+                        mb: 2 
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            mb: 2 
+                        }}>
+                            <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 'bold' }}>
+                                API Response
+                            </Typography>
+                            <Button
+                                size="small"
+                                variant="contained"
                                 onClick={() => copyToClipboard(apiResponse, "response")}
+                                sx={{ 
+                                    bgcolor: 'grey.700',
+                                    color: 'white',
+                                    '&:hover': { bgcolor: 'grey.600' },
+                                    minWidth: 0,
+                                    padding: '4px 8px',
+                                    fontSize: '0.75rem'
+                                }}
                             >
                                 {copied.response ? "✅ Copied" : "📋 Copy"}
-                            </button>
-                        </div>
-                        <div className="bg-gray-900 text-green-400 p-4 rounded-md text-sm font-mono h-40 overflow-y-auto custom-scrollbar">
-                            <pre className="text-left">{apiResponse}</pre>
-                        </div>
-                    </div>
-
-                    <div className="bg-gray-800 p-3 rounded-lg">
-                        <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-white text-sm font-semibold">Error Response</h3>
+                            </Button>
+                        </Box>
+                        <Box sx={{ 
+                            bgcolor: 'grey.900', 
+                            color: 'success.light', 
+                            p: 2, 
+                            borderRadius: 1,
+                            height: 160,
+                            overflow: 'auto'
+                        }}>
+                            <pre style={{ 
+                                margin: 0,
+                                whiteSpace: 'pre-wrap',
+                                wordBreak: 'break-word'
+                            }}>
+                                {apiResponse}
+                            </pre>
+                        </Box>
+                    </Box>
+    
+                    {/* Error Response */}
+                    <Box sx={{ 
+                        bgcolor: 'grey.800', 
+                        p: 2, 
+                        borderRadius: 1 
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between', 
+                            alignItems: 'center', 
+                            mb: 2 
+                        }}>
+                            <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 'bold' }}>
+                                Error Response
+                            </Typography>
                             <FormControl variant="outlined" size="small" sx={{ minWidth: 140 }}>
                                 <Select
                                     value={selectedError}
@@ -467,18 +568,16 @@ const ApiView = ({ apiId, endpoint }) => {
                                     sx={{
                                         color: 'white',
                                         '& .MuiOutlinedInput-notchedOutline': { borderColor: 'white' },
+                                        '& .MuiSvgIcon-root': { color: 'white' }
                                     }}
-                                    displayEmpty // This ensures "Select an error" appears when no value is selected
+                                    displayEmpty
                                 >
-                                    {/* Default option */}
                                     <MenuItem value="" disabled>
                                         <em>Select an error</em>
                                     </MenuItem>
-
-                                    {/* Dynamically render error codes if they exist */}
                                     {apiDetails?.paths?.[endpoint]?.post?.responses ? (
                                         Object.keys(apiDetails.paths[endpoint].post.responses)
-                                            .filter(code => code !== "200") // Exclude success response
+                                            .filter(code => code !== "200")
                                             .map((code) => (
                                                 <MenuItem key={code} value={code}>{code}</MenuItem>
                                             ))
@@ -487,16 +586,27 @@ const ApiView = ({ apiId, endpoint }) => {
                                     )}
                                 </Select>
                             </FormControl>
-                        </div>
-                        <div className="bg-gray-900 text-red-400 p-4 rounded-md text-sm font-mono h-40 overflow-y-auto custom-scrollbar">
-                            <pre className="text-left">
+                        </Box>
+                        <Box sx={{ 
+                            bgcolor: 'grey.900', 
+                            color: 'error.light', 
+                            p: 2, 
+                            borderRadius: 1,
+                            height: 160,
+                            overflow: 'auto'
+                        }}>
+                            <pre style={{ 
+                                margin: 0,
+                                whiteSpace: 'pre-wrap',
+                                wordBreak: 'break-word'
+                            }}>
                                 {selectedError ? errorResponse : "Please select an error code"}
                             </pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 

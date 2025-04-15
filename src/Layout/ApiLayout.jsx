@@ -58,7 +58,6 @@ const ApiLayout = () => {
     return `Logged in since ${loginDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   };
 
-  // Fetch API List
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
@@ -68,7 +67,6 @@ const ApiLayout = () => {
     },
   );
 
-  // Utility function to get the Bearer token
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
@@ -126,7 +124,6 @@ const ApiLayout = () => {
     }
   };
 
-  // Search API Call
   const searchApis = async (query) => {
     try {
       const searchFields = [
@@ -174,8 +171,6 @@ const ApiLayout = () => {
     }
   };
 
-
-  // Debounced Search
   const handleSearchChange = useCallback(
     debounce((query) => {
       if (query.length > 2) {
@@ -294,7 +289,6 @@ const ApiLayout = () => {
     loadAllData();
   }, []);
 
-  // Prepare menu items for DrawerComponent
   const getMenuItems = () => {
     return [
       {
@@ -305,7 +299,7 @@ const ApiLayout = () => {
       {
         text: "List of APIs",
         icon: <DashboardIcon />,
-        apis: categories.flatMap(category => category.apis), // Flatten all APIs for the "List of APIs" view
+        apis: categories.flatMap(category => category.apis),
       },
       {
         text: "List of Categories",
@@ -373,7 +367,7 @@ const ApiLayout = () => {
                 component="div"
                 className="text-orange-400 font-semibold px-3"
                 onClick={() => navigate(isAdmin ? "/admin/apidashboard" : "/user/apidashboard")}
-                sx={{ cursor: "pointer" }}  // Makes it look clickable
+                sx={{ cursor: "pointer" }}
               >
                 Nishkaiv APIM
               </Typography>
@@ -402,7 +396,6 @@ const ApiLayout = () => {
                 />
               </Paper>
 
-              {/* Search Suggestions */}
               {showSuggestions && searchResults.length > 0 && (
                 <Paper
                   sx={{
@@ -447,27 +440,35 @@ const ApiLayout = () => {
               )}
             </Box>
 
-
-
             <div>
 
               <div className="flex items-center">
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'white',
-                    marginRight: 2,
-                    fontSize: '0.875rem',
-                    display: { xs: 'none', sm: 'block' } 
-                  }}
-                >
-                  {formatLoginTime()}
-                </Typography>
+                <div className="flex flex-col mr-2">
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'white',
+                      fontSize: '0.875rem',
+                      display: { xs: 'none', sm: 'block' }
+                    }}
+                  >
+                    Welcome, {user?.userName}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      display: { xs: 'none', sm: 'block' }
+                    }}
+                  >
+                    {formatLoginTime()}
+                  </Typography>
+                </div>
                 <div onClick={handleMenuOpen}>
                   <AccountCircle sx={{ width: "26px", height: "26px", cursor: "pointer" }} />
                 </div>
               </div>
-
 
               <Menu
                 anchorEl={anchorEl}
@@ -504,8 +505,7 @@ const ApiLayout = () => {
         </Main>
       </div>
 
-
-      <div >
+      {/* <div >
         <footer className="bg-gray-900 py-3 px-4 text-center border-t border-gray-700">
           <div className="container mx-auto flex justify-between items-center">
             <Typography variant="caption" className="text-gray-400">
@@ -521,11 +521,39 @@ const ApiLayout = () => {
             </div>
           </div>
         </footer>
+      </div> */}
+
+      <div>
+        <footer className="bg-gray-900 py-3 px-4 text-center border-t border-gray-700">
+          <div className="container mx-auto flex justify-between items-center">
+            <Typography variant="caption" className="text-gray-400">
+              © {new Date().getFullYear()} Nishkaiv APIM
+            </Typography>
+
+            <Typography variant="caption" className="text-gray-400 hover:text-white">
+              <a
+                href="https://api.kriate.co.in:8344/publisher/apis"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                https://api.kriate.co.in:8344/publisher/apis
+              </a>
+            </Typography>
+
+            <div className="flex space-x-4">
+              <Typography variant="caption" className="text-gray-500">
+                v1.0.0
+              </Typography>
+              <Typography variant="caption" className="text-gray-500">
+                All Rights Reserved
+              </Typography>
+            </div>
+          </div>
+        </footer>
       </div>
 
-
     </div>
-
 
   );
 }
