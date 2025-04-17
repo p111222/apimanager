@@ -434,7 +434,7 @@ const CategoryDetailsPage = () => {
     return (
         <Box
             sx={{
-                padding: 4,
+                padding: 2,
                 backgroundColor: '#f5f7fa',
                 minHeight: '100vh',
                 display: 'flex',
@@ -448,7 +448,8 @@ const CategoryDetailsPage = () => {
                 variant="h4"
                 sx={{
                     fontWeight: 'bold',
-                    marginBottom: 2,
+                    marginBottom: 0,
+                    marginTop: 1,
                     textAlign: 'left',
                     color: '#00796b',
                     fontSize: '28px',

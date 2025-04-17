@@ -406,7 +406,7 @@ const ApiView = ({ apiId, endpoint }) => {
         <Box sx={{ 
             width: '100%',
             maxWidth: '100%',
-            overflowX: 'hidden' // This prevents horizontal scrolling
+            overflowX: 'hidden' 
         }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider", marginTop: '8px' }}>
                 <Tabs value={selectedTab} onChange={handleTabChange} aria-label="API Tabs">
@@ -451,7 +451,8 @@ const ApiView = ({ apiId, endpoint }) => {
                         p: 2, 
                         borderRadius: 1, 
                         mb: 2,
-                        width: '100%'
+                        width: '100%',
+                        textAlign: 'left'
                     }}>
                         <Box sx={{ 
                             display: 'flex', 
@@ -483,7 +484,7 @@ const ApiView = ({ apiId, endpoint }) => {
                             color: 'warning.light', 
                             p: 2, 
                             borderRadius: 1,
-                            height: 160,
+                            // height: 160,
                             overflow: 'auto'
                         }}>
                             <pre style={{ 
@@ -501,7 +502,8 @@ const ApiView = ({ apiId, endpoint }) => {
                         bgcolor: 'grey.800', 
                         p: 2, 
                         borderRadius: 1, 
-                        mb: 2 
+                        mb: 2, 
+                        textAlign: 'left'
                     }}>
                         <Box sx={{ 
                             display: 'flex', 
@@ -533,7 +535,7 @@ const ApiView = ({ apiId, endpoint }) => {
                             color: 'success.light', 
                             p: 2, 
                             borderRadius: 1,
-                            height: 160,
+                            // height: 160,
                             overflow: 'auto'
                         }}>
                             <pre style={{ 
@@ -550,7 +552,8 @@ const ApiView = ({ apiId, endpoint }) => {
                     <Box sx={{ 
                         bgcolor: 'grey.800', 
                         p: 2, 
-                        borderRadius: 1 
+                        borderRadius: 1,
+                        textAlign: 'left'   
                     }}>
                         <Box sx={{ 
                             display: 'flex', 
@@ -592,7 +595,7 @@ const ApiView = ({ apiId, endpoint }) => {
                             color: 'error.light', 
                             p: 2, 
                             borderRadius: 1,
-                            height: 160,
+                            // height: 160,
                             overflow: 'auto'
                         }}>
                             <pre style={{ 
