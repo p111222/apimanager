@@ -602,8 +602,7 @@ const CategoryDetailsPage = () => {
                             mb: 2,
                             borderRadius: 2,
                             '&:hover': {
-                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                                cursor: 'pointer'
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
                             },
                             textAlign: 'left'
                         }}
@@ -612,13 +611,12 @@ const CategoryDetailsPage = () => {
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
-                                alignItems: 'center',
-                                cursor: 'pointer'
+                                alignItems: 'flex-start'
                             }}
-                            onClick={() => handleExpandClick(api.id)}
                         >
                             <Box>
-                                <Typography variant="h6"
+                                <Typography
+                                    variant="h6"
                                     onClick={() => handleApiNameClick(api.id, api.name)}
                                     sx={{
                                         color: '#00796b',
@@ -627,7 +625,8 @@ const CategoryDetailsPage = () => {
                                         '&:hover': {
                                             textDecoration: 'underline'
                                         }
-                                    }}>
+                                    }}
+                                >
                                     {api.name}
                                 </Typography>
                                 <Typography variant="body2" sx={{
@@ -639,22 +638,19 @@ const CategoryDetailsPage = () => {
                                     {api.description || "No description available"}
                                 </Typography>
                             </Box>
-                            <IconButton size="small">
-                                {expandedApi === api.id ? <ExpandLess /> : <ExpandMore />}
-                            </IconButton>
                         </Box>
 
-                        <Collapse in={expandedApi === api.id} timeout="auto" unmountOnExit>
+                        {/* Always visible configuration section */}
+                        <Box sx={{ mt: 2 }}>
                             <Typography variant="subtitle2" sx={{
-                                mt: 2,
                                 mb: 1,
                                 color: '#00796b',
                                 fontWeight: 600
                             }}>
                                 Configuration
                             </Typography>
-                            {renderApiConfiguration(apiDetailsMap[api.id])}
-                        </Collapse>
+                            {renderApiConfiguration(apiDetailsMap[api.id] || api)}
+                        </Box>
                     </Paper>
                 ))}
             </Paper>

@@ -1,11 +1,9 @@
 import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import keycloak, { initializeKeycloak } from "./keycloak";
-import axios from "../../Axios";
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
 import { AuthContext } from "../../Context/AuthContext";
-import CircularProgress from '@mui/material/CircularProgress';
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 const Login = () => {
   const navigate = useNavigate();

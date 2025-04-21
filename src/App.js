@@ -66,7 +66,6 @@ const App = () => {
   useEffect(() => {
     if (sessionValidity === "invalid") {
       setShowModal(true);
-
     } else {
       setShowModal(false);
     }
