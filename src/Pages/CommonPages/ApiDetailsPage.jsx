@@ -1455,7 +1455,8 @@ const ApiDetailsPage = () => {
                             <Box>
                                 <TextField
                                     label="Description"
-                                    value={editedDescription || apiDetails.description}
+                                    // value={editedDescription || apiDetails.description}
+                                    value={editedDescription}
                                     onChange={(e) => setEditedDescription(e.target.value)}
                                     fullWidth
                                     multiline
@@ -1467,7 +1468,12 @@ const ApiDetailsPage = () => {
                                 <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 1, gap: 1 }}>
                                     <Button
                                         variant="outlined"
-                                        onClick={() => setEditingDescription(false)}
+                                        // onClick={() => setEditingDescription(false)}
+                                        onClick={() => {
+                                            setEditingDescription(false);
+                                            // setEditedDescription(apiDetails.description); 
+                                            setEditedDescription(''); 
+                                          }}
                                     >
                                         Cancel
                                     </Button>
@@ -1490,7 +1496,11 @@ const ApiDetailsPage = () => {
                                 </Typography>
                                 {isAdmin && !editingDescription && (
                                     <IconButton
-                                        onClick={() => setEditingDescription(true)}
+                                        // onClick={() => setEditingDescription(true)}
+                                        onClick={() => {
+                                            setEditingDescription(true);
+                                            setEditedDescription(apiDetails.description); // Initialize with current description
+                                          }}
                                         size="small"
                                         sx={{
                                             position: 'absolute',
