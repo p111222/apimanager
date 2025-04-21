@@ -413,8 +413,8 @@ const AppTab = ({ apiDetails }) => {
 
       const response = await axiosPrivate.put(
         // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
-        // `/am/publisher/v4/apis/${apiId}`,
-        `/${apiId}`,
+        `/am/publisher/v4/apis/${apiId}`,
+        // `/${apiId}`,
         updatedData,
         {
           headers: {

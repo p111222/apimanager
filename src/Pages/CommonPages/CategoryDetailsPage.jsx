@@ -269,7 +269,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     Typography,
     Box,
@@ -295,6 +295,7 @@ const CategoryDetailsPage = () => {
     const [loading, setLoading] = useState(true);
     const [expandedApi, setExpandedApi] = useState(null);
     const [apiDetailsMap, setApiDetailsMap] = useState({});
+    const navigate = useNavigate();
 
     const randomData = {
         provider: "Admin",
@@ -349,6 +350,11 @@ const CategoryDetailsPage = () => {
         }
     };
 
+    const handleApiNameClick = (apiId, apiName) => {
+        const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+        navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
+    };
+
     useEffect(() => {
         const fetchCategoryApis = async () => {
             try {
@@ -372,15 +378,15 @@ const CategoryDetailsPage = () => {
         if (!apiDetails) return null;
 
         return (
-            <Box sx={{ 
+            <Box sx={{
                 mt: 2,
                 p: 2,
                 backgroundColor: '#f9f9f9',
                 borderRadius: 1,
                 borderLeft: '3px solid #00796b'
             }}>
-                <Box sx={{ 
-                    display: 'flex', 
+                <Box sx={{
+                    display: 'flex',
                     flexWrap: 'wrap',
                     gap: 2,
                     alignItems: 'center'
@@ -411,12 +417,12 @@ const CategoryDetailsPage = () => {
 
                     {/* Status */}
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Chip 
-                            label={apiDetails.lifeCycleStatus} 
+                        <Chip
+                            label={apiDetails.lifeCycleStatus}
                             size="small"
                             color={
-                                apiDetails.lifeCycleStatus === 'PUBLISHED' ? 'success' : 
-                                apiDetails.lifeCycleStatus === 'CREATED' ? 'warning' : 'default'
+                                apiDetails.lifeCycleStatus === 'PUBLISHED' ? 'success' :
+                                    apiDetails.lifeCycleStatus === 'CREATED' ? 'warning' : 'default'
                             }
                         />
                     </Box>
@@ -586,7 +592,7 @@ const CategoryDetailsPage = () => {
                     />
                 </Box>
 
-                <Divider sx={{ marginBottom: 1}} />
+                <Divider sx={{ marginBottom: 1 }} />
 
                 {apis.map(api => (
                     <Paper
@@ -599,30 +605,36 @@ const CategoryDetailsPage = () => {
                                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
                                 cursor: 'pointer'
                             },
-                            textAlign: 'left' 
+                            textAlign: 'left'
                         }}
                     >
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                justifyContent: 'space-between', 
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
                                 alignItems: 'center',
                                 cursor: 'pointer'
                             }}
                             onClick={() => handleExpandClick(api.id)}
                         >
                             <Box>
-                                <Typography variant="h6" sx={{
-                                    color: '#00796b',
-                                    textAlign: 'left' 
-                                }}>
+                                <Typography variant="h6"
+                                    onClick={() => handleApiNameClick(api.id, api.name)}
+                                    sx={{
+                                        color: '#00796b',
+                                        textAlign: 'left',
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            textDecoration: 'underline'
+                                        }
+                                    }}>
                                     {api.name}
                                 </Typography>
                                 <Typography variant="body2" sx={{
                                     mt: 1,
                                     color: '#616161',
                                     whiteSpace: 'pre-line',
-                                    textAlign: 'left' 
+                                    textAlign: 'left'
                                 }}>
                                     {api.description || "No description available"}
                                 </Typography>
@@ -633,8 +645,8 @@ const CategoryDetailsPage = () => {
                         </Box>
 
                         <Collapse in={expandedApi === api.id} timeout="auto" unmountOnExit>
-                            <Typography variant="subtitle2" sx={{ 
-                                mt: 2, 
+                            <Typography variant="subtitle2" sx={{
+                                mt: 2,
                                 mb: 1,
                                 color: '#00796b',
                                 fontWeight: 600
