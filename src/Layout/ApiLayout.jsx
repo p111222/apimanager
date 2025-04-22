@@ -442,7 +442,7 @@ const ApiLayout = () => {
 
             <div>
 
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
                 <div className="flex flex-col mr-2">
                   <Typography
                     variant="body2"

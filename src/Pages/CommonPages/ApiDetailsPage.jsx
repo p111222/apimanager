@@ -1086,7 +1086,7 @@ import {
     Button, Modal, TextField, IconButton,
     List, ListItem, ListItemButton, ListItemIcon, ListItemText, Card, CardContent
 } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { useDropzone } from 'react-dropzone';
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
@@ -1113,6 +1113,42 @@ const ApiDetailsPage = () => {
     const [editingDescription, setEditingDescription] = useState(false);
     const [editedDescription, setEditedDescription] = useState('');
     const architectureFlowRef = useRef(null);
+    const location = useLocation();
+
+    // useEffect(() => {
+    //     if (location.state?.shouldScrollToOperations && operationsRef.current) {
+    //         const timer = setTimeout(() => {
+    //             operationsRef.current.scrollIntoView({ 
+    //                 behavior: 'smooth',
+    //                 block: 'start'
+    //             });
+    //             // Clear the state after scrolling
+    //             navigate(location.pathname, { replace: true, state: {} });
+    //         }, 300); // Small delay to ensure component renders
+            
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [location.state, navigate, location.pathname]);
+
+    useEffect(() => {
+        if (location.state?.shouldScrollToOperations && operationsRef.current) {
+            const timer = setTimeout(() => {
+                operationsRef.current.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                // Clear the state after scrolling
+                navigate(location.pathname, { replace: true, state: {} });
+            }, 300); // Small delay to ensure component renders
+            
+            return () => clearTimeout(timer);
+        }
+    }, [location.state, navigate, location.pathname]);    
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        setActiveSection('general');
+    }, [apiId]);
 
     const { data: apiDetails, isLoading, error } = useQuery(['apiDetails', apiId], async () => {
         // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
@@ -1197,8 +1233,17 @@ const ApiDetailsPage = () => {
     const operationsRef = useRef(null);
     const endpointsRef = useRef(null);
 
+    // const scrollToSection = (ref) => {
+    //     ref.current.scrollIntoView({ behavior: 'smooth' });
+    // };
+
     const scrollToSection = (ref) => {
-        ref.current.scrollIntoView({ behavior: 'smooth' });
+        if (ref?.current) {
+            ref.current.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
     };
 
     if (isLoading) return (
@@ -1223,15 +1268,13 @@ const ApiDetailsPage = () => {
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 }}>
 
-                    <div className="w-full max-w-[1200px] rounded-xl bg-white shadow-[0_8px_10px_rgba(0,0,0,0.2)] overflow-hidden">
-                        {/* Main Header */}
+                    {/* <div className="w-full max-w-[1200px] rounded-xl bg-white shadow-[0_8px_10px_rgba(0,0,0,0.2)] overflow-hidden">
                         <div className="flex items-center min-h-12 px-4 bg-amber-100">
                             <Security className="text-gray-400 mr-2" />
                             <h6 className="text-lg font-semibold">Security & Endpoints</h6>
                         </div>
 
                         <div className="p-4 text-left">
-                            {/* Endpoints - Side by Side */}
                             <div className="grid grid-cols-2 gap-4 mb-6">
                                 <div>
                                     <p className="text-sm font-semibold text-slate-600 mb-1">Sandbox Endpoint</p>
@@ -1251,7 +1294,6 @@ const ApiDetailsPage = () => {
                                 </div>
                             </div>
 
-                            {/* Security Details */}
                             <div >
                                 <p className="text-sm">
                                     <span className="font-bold">Authorization Header:</span> {apiDetails.authorizationHeader}
@@ -1265,6 +1307,85 @@ const ApiDetailsPage = () => {
                                             {scheme}
                                         </span>
                                     ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div> */}
+                    <div className="w-full max-w-[1200px] rounded-xl bg-white shadow-[0_8px_10px_rgba(0,0,0,0.2)] overflow-hidden">
+                        <div className="flex items-center min-h-12 px-4 bg-amber-100">
+                            <Security className="text-gray-400 mr-2" />
+                            <h6 className="text-lg font-semibold">Security & Endpoints</h6>
+                        </div>
+
+                        <div className="p-4 text-left">
+                            {/* Authorization Header */}
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-3 items-baseline">
+                                <div className="sm:col-span-1">
+                                    <p className="text-xs font-semibold text-slate-600">Authorization Header</p>
+                                </div>
+                                <div className="sm:col-span-4">
+                                    <div className="flex flex-wrap gap-2">
+                                        {apiDetails.securityScheme?.length > 0 ? (
+                                            apiDetails.securityScheme.map((scheme, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-2 py-1 text-xs text-white bg-green-600 rounded-full whitespace-nowrap"
+                                                >
+                                                    {scheme}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            <span className="text-xs text-slate-400">-</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Sandbox Endpoint */}
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-3 items-baseline">
+                                <div className="sm:col-span-1">
+                                    <p className="text-xs font-semibold text-slate-600">Sandbox Endpoint</p>
+                                </div>
+                                <div className="sm:col-span-4">
+                                    <code className="text-xs text-slate-800 break-all">
+                                        {apiDetails.endpointConfig?.sandbox_endpoints?.url || 'NA'}
+                                    </code>
+                                </div>
+                            </div>
+
+                            {/* Production Endpoint */}
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-3 items-baseline">
+                                <div className="sm:col-span-1">
+                                    <p className="text-xs font-semibold text-slate-600">Production Endpoint</p>
+                                </div>
+                                <div className="sm:col-span-4">
+                                    <code className="text-xs text-slate-800 break-all">
+                                        {apiDetails.endpointConfig?.production_endpoints?.url || 'NA'}
+                                    </code>
+                                </div>
+                            </div>
+
+                            {/* Rate Limit */}
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-3 items-baseline">
+                                <div className="sm:col-span-1">
+                                    <p className="text-xs font-semibold text-slate-600">Rate Limit</p>
+                                </div>
+                                <div className="sm:col-span-4">
+                                    <code className="text-xs text-slate-800 break-all">
+                                        {apiDetails.rateLimit || 'NA'}
+                                    </code>
+                                </div>
+                            </div>
+
+                            {/* Last Updated On */}
+                            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-3 items-baseline">
+                                <div className="sm:col-span-1">
+                                    <p className="text-xs font-semibold text-slate-600">Last Updated On</p>
+                                </div>
+                                <div className="sm:col-span-4">
+                                    <code className="text-xs text-slate-800 break-all">
+                                        {apiDetails.lastUpdated || 'NA'}
+                                    </code>
                                 </div>
                             </div>
                         </div>
@@ -1472,8 +1593,8 @@ const ApiDetailsPage = () => {
                                         onClick={() => {
                                             setEditingDescription(false);
                                             // setEditedDescription(apiDetails.description); 
-                                            setEditedDescription(''); 
-                                          }}
+                                            setEditedDescription('');
+                                        }}
                                     >
                                         Cancel
                                     </Button>
@@ -1500,7 +1621,7 @@ const ApiDetailsPage = () => {
                                         onClick={() => {
                                             setEditingDescription(true);
                                             setEditedDescription(apiDetails.description); // Initialize with current description
-                                          }}
+                                        }}
                                         size="small"
                                         sx={{
                                             position: 'absolute',

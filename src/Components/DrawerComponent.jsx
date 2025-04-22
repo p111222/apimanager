@@ -563,26 +563,62 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
     };
 
 
-    const handleEndpointToggle = (apiName, apiId, methodName) => {
-        if (!methodName) {
-            setOpenEndpoints(prev => ({
-                ...prev,
-                [apiName]: !prev[apiName]
-            }));
-        } else {
-            setOpenEndpoints(prev => ({
-                ...prev,
-                [apiName]: true
-            }));
-        }
+    // const handleEndpointToggle = (apiName, apiId, methodName) => {
+    //     if (!methodName) {
+    //         setOpenEndpoints(prev => ({
+    //             ...prev,
+    //             [apiName]: !prev[apiName]
+    //         }));
+    //     } else {
+    //         setOpenEndpoints(prev => ({
+    //             ...prev,
+    //             [apiName]: true
+    //         }));
+    //     }
 
-        setEndpoint(methodName || apiName);
-        setActiveTab("operations");
-        setSelectedApiName(apiName);
+    //     setEndpoint(methodName || apiName);
+    //     setActiveTab("operations");
+    //     setSelectedApiName(apiName);
 
+    //     // const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+    //     // navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
+
+    //     const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+    //     navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`, {
+    //         state: { shouldScrollToOperations: true }  // Add this state
+    //     });
+    // };
+
+    const handleApiNameClick = (apiName, apiId) => {
+        // Just navigate without scroll state
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
         navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
+        
+        // Keep expansion state
+        setOpenEndpoints(prev => ({
+            ...prev,
+            [apiName]: !prev[apiName]
+        }));
     };
+    
+    const handleEndpointClick = (apiName, apiId, methodName) => {
+        // Navigate with scroll state
+        const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+        navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`, {
+            state: { shouldScrollToOperations: true }
+        });
+        
+        // Set context values
+        setEndpoint(methodName);
+        setActiveTab("operations");
+        setSelectedApiName(apiName);
+        
+        // Ensure API stays expanded
+        setOpenEndpoints(prev => ({
+            ...prev,
+            [apiName]: true
+        }));
+    };  
 
     const handleListItemClick = (selectedId, path, apiId) => {
         setSelectedIndex(selectedId);
@@ -651,7 +687,9 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                             ...listItemStyles(false),
                                                             pl: 4,
                                                         }}
-                                                        onClick={() => handleEndpointToggle(api.name, api.id)}
+                                                        // onClick={() => handleEndpointToggle(api.name, api.id)}
+                                                        onClick={() => handleApiNameClick(api.name, api.id)} // Only navigation
+
                                                     >
                                                         <ListItemText
                                                             primary={api.name}
@@ -674,14 +712,16 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                                             display: "flex",
                                                                             alignItems: "center",
                                                                         }}
-                                                                        onClick={() => {
-                                                                            handleEndpointToggle(api.name, api.id, methodObj.name);
-                                                                            handleListItemClick(
-                                                                                `${api.name}-${endpointIndex}-${methodObj.name}`,
-                                                                                methodObj.name,
-                                                                                api.id
-                                                                            )
-                                                                        }}
+                                                                        // onClick={() => {
+                                                                        //     handleEndpointToggle(api.name, api.id, methodObj.name);
+                                                                        //     handleListItemClick(
+                                                                        //         `${api.name}-${endpointIndex}-${methodObj.name}`,
+                                                                        //         methodObj.name,
+                                                                        //         api.id
+                                                                        //     )
+                                                                        // }}
+                                                                        onClick={() => handleEndpointClick(api.name, api.id, methodObj.name)} // Navigation + scroll
+
                                                                     >
                                                                         <ListItemText
                                                                             primary={methodObj.name}
@@ -799,14 +839,16 @@ const DrawerComponent = ({ openDrawer, handleDrawerToggle, menuItems }) => {
                                                                                             display: "flex",
                                                                                             alignItems: "center",
                                                                                         }}
-                                                                                        onClick={() => {
-                                                                                            handleEndpointToggle(api.name, api.id, methodObj.name);
-                                                                                            handleListItemClick(
-                                                                                                `${api.name}-${endpointIndex}-${methodObj.name}`,
-                                                                                                methodObj.name,
-                                                                                                api.id
-                                                                                            )
-                                                                                        }}
+                                                                                        // onClick={() => {
+                                                                                        //     handleEndpointToggle(api.name, api.id, methodObj.name);
+                                                                                        //     handleListItemClick(
+                                                                                        //         `${api.name}-${endpointIndex}-${methodObj.name}`,
+                                                                                        //         methodObj.name,
+                                                                                        //         api.id
+                                                                                        //     )
+                                                                                        // }}
+                                                                                        onClick={() => handleEndpointClick(api.name, api.id, methodObj.name)} // Navigation + scroll
+
                                                                                     >
                                                                                         <ListItemText
                                                                                             primary={methodObj.name}
