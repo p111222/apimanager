@@ -8,7 +8,7 @@ const LandingPage = () => {
         <div className="bg-gray-100 h-screen flex items-center">
             <div className="container mx-auto">
                 <div className="flex flex-col items-center">
-                    <h1 className="text-4xl font-semibold mb-6">Welcome to Nishkaiv APIM</h1>
+                    <h1 className="text-4xl font-semibold mb-6">Welcome to API Wiki Portal</h1>
 
                     <div className="flex space-x-4">
                         <button
