@@ -369,7 +369,7 @@ const ApiLayout = () => {
                 onClick={() => navigate(isAdmin ? "/admin/apidashboard" : "/user/apidashboard")}
                 sx={{ cursor: "pointer" }}
               >
-                Nishkaiv APIM
+                API Wiki Portal
               </Typography>
 
             </div>
