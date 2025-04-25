@@ -212,6 +212,23 @@ const BreadcrumbComponent = () => {
     // Get the previous location state
     const prevLocation = location.state?.from || null;
 
+    // Function to clean path segments (remove admin/user and their dashboard)
+    const getCleanPathSegments = () => {
+        const segments = [...pathnames];
+        
+        // Remove 'admin' or 'user' and their dashboard if present
+        if (segments.length > 0 && (segments[0] === 'admin' || segments[0] === 'user')) {
+            segments.shift(); // Remove 'admin' or 'user'
+            if (segments.length > 0 && segments[0] === 'apidashboard') {
+                segments.shift(); // Remove 'apidashboard'
+            }
+        }
+        
+        return segments;
+    };
+
+    const cleanPathSegments = getCleanPathSegments();
+
     return (
         <Stack spacing={2} sx={{ padding: "4px 8px" }}>
             <Breadcrumbs
@@ -245,34 +262,16 @@ const BreadcrumbComponent = () => {
                     </Link>
                 )}
 
-                {pathnames.map((value, index) => {
-                    const isAdminOrUser = value === "user" || value === "admin";
+                {cleanPathSegments.map((value, index) => {
                     const isApiDetails = value === "api-details";
                     const isCategoryDetails = value === "category-details";
-                    const isLast = index === pathnames.length - 1;
+                    const isLast = index === cleanPathSegments.length - 1;
                     const isIdSegment = apiId && value === apiId;
                     const isNameSegment = categoryName && value === categoryName;
 
                     // Skip rendering if this is the ID/name segment
                     if (isIdSegment || isNameSegment) {
                         return null;
-                    }
-
-                    if (isAdminOrUser) {
-                        return (
-                            <Link
-                                key={index}
-                                to={dashboardPath}
-                                style={{ 
-                                    textDecoration: "none", 
-                                    color: "inherit",
-                                    display: 'flex',
-                                    alignItems: 'center'
-                                }}
-                            >
-                                {value.charAt(0).toUpperCase() + value.slice(1)}
-                            </Link>
-                        );
                     }
 
                     if (isApiDetails) {
@@ -310,12 +309,12 @@ const BreadcrumbComponent = () => {
                             fontWeight={600}
                             sx={{ whiteSpace: 'nowrap' }}
                         >
-                            {value.charAt(0).toUpperCase() + value.slice(1)}
+                            {value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, ' ')}
                         </Typography>
                     ) : (
                         <Link 
                             key={index} 
-                            to={`/${pathnames.slice(0, index + 1).join("/")}`}
+                            to={`/${pathnames.slice(0, pathnames.indexOf(value) + 1).join("/")}`}
                             style={{ 
                                 textDecoration: "none", 
                                 color: "inherit",
@@ -324,7 +323,7 @@ const BreadcrumbComponent = () => {
                                 whiteSpace: 'nowrap'
                             }}
                         >
-                            {value.charAt(0).toUpperCase() + value.slice(1)}
+                            {value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, ' ')}
                         </Link>
                     );
                 })}

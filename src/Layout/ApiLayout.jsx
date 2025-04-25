@@ -70,8 +70,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        // "http://localhost:8083/token",
-        "/token",
+        "http://localhost:8083/token",
+        // "/token",
         null,
         {
           headers: {
@@ -250,8 +250,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-      // const response = await axiosPrivate.get(`/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,
