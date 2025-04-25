@@ -124,6 +124,53 @@ const ApiLayout = () => {
     }
   };
 
+  // const searchApis = async (query) => {
+  //   try {
+  //     const searchFields = [
+  //       `name:${query}`,
+  //       `description:${query}`,
+  //       `context:${query}`,
+  //       `version:${query}`,
+  //       `provider:${query}`,
+  //       `type:${query}`,
+  //       `audience:${query}`,
+  //       `lifeCycleStatus:${query}`,
+  //       `workflowStatus:${query}`,
+  //       `updatedBy:${query}`,
+  //       `gatewayVendor:${query}`,
+  //       `advertiseOnly:${query}`,
+  //     ];
+
+  //     const token = await getBearerToken();
+
+
+  //     let combinedResults = [];
+  //     for (const field of searchFields) {
+  //       const response = await axiosPrivate.get(
+  //         `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+  //         // `http://api.kriate.co.in:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+  //         // `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
+  //       if (response.data.list) {
+  //         combinedResults = [...combinedResults, ...response.data.list];
+  //       }
+  //     }
+
+  //     const uniqueResults = Array.from(new Map(combinedResults.map(item => [item.id, item])).values());
+
+  //     console.log("Search Response:", uniqueResults);
+  //     setSearchResults(uniqueResults);
+  //     setShowSuggestions(true);
+  //   } catch (error) {
+  //     console.error("Error searching APIs:", error.response?.data || error.message);
+  //   }
+  // };
+
   const searchApis = async (query) => {
     try {
       const searchFields = [
@@ -140,29 +187,24 @@ const ApiLayout = () => {
         `gatewayVendor:${query}`,
         `advertiseOnly:${query}`,
       ];
-
-      const token = await getBearerToken();
-
-
-      let combinedResults = [];
-      for (const field of searchFields) {
-        const response = await axiosPrivate.get(
-          `https://43.204.108.73:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
-          // `http://api.kriate.co.in:8344/api/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
-          // `/am/publisher/v4/apis?query=${encodeURIComponent(field)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.data.list) {
-          combinedResults = [...combinedResults, ...response.data.list];
+  
+      const response = await axiosPrivate.get(
+        // `http://localhost:8088/api/search?query=${encodeURIComponent(query)}`,
+        `/search?query=${encodeURIComponent(query)}`,
+        {
+          headers: {
+            Authorization: `Bearer 9919f507-82e2-3bf1-9ba8-750aba735bc3`, 
+          },
         }
+      );
+  
+      let combinedResults = [];
+      if (response.data.list) {
+        combinedResults = response.data.list;
       }
-
+  
       const uniqueResults = Array.from(new Map(combinedResults.map(item => [item.id, item])).values());
-
+  
       console.log("Search Response:", uniqueResults);
       setSearchResults(uniqueResults);
       setShowSuggestions(true);
@@ -170,6 +212,7 @@ const ApiLayout = () => {
       console.error("Error searching APIs:", error.response?.data || error.message);
     }
   };
+  
 
   const handleSearchChange = useCallback(
     debounce((query) => {

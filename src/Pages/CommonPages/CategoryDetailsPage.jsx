@@ -287,6 +287,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Info from '@mui/icons-material/Info';
 import { Security, Public, DirectionsCar, ExpandMore, ExpandLess } from '@mui/icons-material';
 import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
+import BreadcrumbComponent from '../../Components/BreadcrumbComponent';
 
 const CategoryDetailsPage = () => {
     const { categoryName } = useParams();
@@ -438,223 +439,238 @@ const CategoryDetailsPage = () => {
     );
 
     return (
-        <Box
-            sx={{
-                padding: 2,
-                backgroundColor: '#f5f7fa',
-                minHeight: '100vh',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                gap: 3
-            }}
-        >
-            <Typography
-                variant="h4"
+        <>
+            <Box sx={{
+                // position: 'sticky',
+                top: 0,
+                zIndex: 1100,
+                backgroundColor: '#f8fafc',
+                pt: 2,
+                pb: 1,
+                mb: 1,
+                mt: 1
+            }}>
+                <BreadcrumbComponent />
+            </Box>
+            <Box
                 sx={{
-                    fontWeight: 'bold',
-                    marginBottom: 0,
-                    marginTop: 1,
-                    textAlign: 'left',
-                    color: '#00796b',
-                    fontSize: '28px',
-                    width: '100%',
-                    maxWidth: 1200
-                }}
-            >
-                Category Details - {categoryName}
-            </Typography>
-
-            <Paper
-                elevation={3}
-                sx={{
-                    width: '100%',
-                    maxWidth: 1200,
-                    padding: 3,
-                    borderRadius: 3,
-                    backgroundColor: '#ffffff',
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                }}
-            >
-                <Accordion defaultExpanded>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        sx={{ backgroundColor: '#e1f5fe' }}
-                    >
-                        <Info color="primary" sx={{
-                            marginRight: 1,
-                            color: '#00796b'
-                        }} />
-                        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                            General Information
-                        </Typography>
-                    </AccordionSummary>
-
-                    <AccordionDetails sx={{
-                        padding: '24px 32px',
-                        backgroundColor: '#f5f5f5',
-                        borderTop: '1px solid #e0e0e0'
-                    }}>
-                        <Box sx={{
-                            display: 'grid',
-                            gridTemplateColumns: 'minmax(120px, max-content) 1fr',
-                            gap: '12px 8px',
-                            alignItems: 'baseline',
-                        }}>
-                            <Typography variant="body1" sx={{
-                                fontWeight: 500,
-                                color: '#00796b',
-                                alignSelf: 'center',
-                                textAlign: 'left',
-                            }}>
-                                Name:
-                            </Typography>
-                            <Typography variant="body1" sx={{
-                                color: '#424242',
-                                paddingLeft: '4px',
-                                textAlign: 'left',
-                            }}>
-                                {categoryName}
-                            </Typography>
-
-                            <Typography variant="body1" sx={{
-                                fontWeight: 500,
-                                color: '#00796b',
-                                alignSelf: 'flex-start',
-                                pt: 1,
-                                textAlign: 'left',
-                            }}>
-                                Description:
-                            </Typography>
-                            <Typography
-                                variant="body1"
-                                sx={{
-                                    whiteSpace: 'pre-wrap',
-                                    wordBreak: 'break-word',
-                                    lineHeight: '1.8',
-                                    color: '#424242',
-                                    textAlign: 'left',
-                                }}
-                            >
-                                {apis[0]?.description || "No description available"}
-                            </Typography>
-
-                            {[
-                                { label: 'Provider', value: randomData.provider },
-                                { label: 'Type', value: randomData.type },
-                                { label: 'Version', value: randomData.version },
-                                { label: 'Status', value: randomData.status },
-                                { label: 'Visibility', value: randomData.visibility }
-                            ].map((item, index) => (
-                                <React.Fragment key={index}>
-                                    <Typography variant="body1" sx={{
-                                        fontWeight: 500,
-                                        color: '#00796b',
-                                        alignSelf: 'center',
-                                        textAlign: 'left',
-                                    }}>
-                                        {item.label}:
-                                    </Typography>
-                                    <Typography variant="body1" sx={{
-                                        color: '#424242',
-                                        paddingLeft: '4px',
-                                        textAlign: 'left',
-                                    }}>
-                                        {item.value}
-                                    </Typography>
-                                </React.Fragment>
-                            ))}
-                        </Box>
-                    </AccordionDetails>
-                </Accordion>
-
-                <Box sx={{
+                    padding: 2,
+                    backgroundColor: '#f5f7fa',
+                    minHeight: '100vh',
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'center',
-                    mt: 3,
-                    mb: 2,
-                    p: 2,
-                    backgroundColor: '#e8f5e9',
-                    borderRadius: 1
-                }}>
-                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#2e7d32' }}>
-                        API List
-                    </Typography>
-                    <Chip
-                        label={`Total: ${apis.length} APIs`}
-                        color="success"
-                        sx={{
-                            fontWeight: 600,
-                            fontSize: '0.875rem'
-                        }}
-                    />
-                </Box>
+                    flexDirection: 'column',
+                    gap: 3
+                }}
+            >
 
-                <Divider sx={{ marginBottom: 1 }} />
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        marginBottom: 0,
+                        marginTop: 1,
+                        textAlign: 'left',
+                        color: '#00796b',
+                        fontSize: '28px',
+                        width: '100%',
+                        maxWidth: 1200
+                    }}
+                >
+                    Category Details - {categoryName}
+                </Typography>
 
-                {apis.map(api => (
-                    <Paper
-                        key={api.id}
-                        sx={{
-                            p: 3,
-                            mb: 2,
-                            borderRadius: 2,
-                            '&:hover': {
-                                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                            },
-                            textAlign: 'left'
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'flex-start'
-                            }}
+                <Paper
+                    elevation={3}
+                    sx={{
+                        width: '100%',
+                        maxWidth: 1200,
+                        padding: 3,
+                        borderRadius: 3,
+                        backgroundColor: '#ffffff',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
+                    <Accordion defaultExpanded>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            sx={{ backgroundColor: '#e1f5fe' }}
                         >
-                            <Box>
+                            <Info color="primary" sx={{
+                                marginRight: 1,
+                                color: '#00796b'
+                            }} />
+                            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                General Information
+                            </Typography>
+                        </AccordionSummary>
+
+                        <AccordionDetails sx={{
+                            padding: '24px 32px',
+                            backgroundColor: '#f5f5f5',
+                            borderTop: '1px solid #e0e0e0'
+                        }}>
+                            <Box sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'minmax(120px, max-content) 1fr',
+                                gap: '12px 8px',
+                                alignItems: 'baseline',
+                            }}>
+                                <Typography variant="body1" sx={{
+                                    fontWeight: 500,
+                                    color: '#00796b',
+                                    alignSelf: 'center',
+                                    textAlign: 'left',
+                                }}>
+                                    Name:
+                                </Typography>
+                                <Typography variant="body1" sx={{
+                                    color: '#424242',
+                                    paddingLeft: '4px',
+                                    textAlign: 'left',
+                                }}>
+                                    {categoryName}
+                                </Typography>
+
+                                <Typography variant="body1" sx={{
+                                    fontWeight: 500,
+                                    color: '#00796b',
+                                    alignSelf: 'flex-start',
+                                    pt: 1,
+                                    textAlign: 'left',
+                                }}>
+                                    Description:
+                                </Typography>
                                 <Typography
-                                    variant="h6"
-                                    onClick={() => handleApiNameClick(api.id, api.name)}
+                                    variant="body1"
                                     sx={{
-                                        color: '#00796b',
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
+                                        lineHeight: '1.8',
+                                        color: '#424242',
                                         textAlign: 'left',
-                                        cursor: 'pointer',
-                                        '&:hover': {
-                                            textDecoration: 'underline'
-                                        }
                                     }}
                                 >
-                                    {api.name}
+                                    {apis[0]?.description || "No description available"}
                                 </Typography>
-                                <Typography variant="body2" sx={{
-                                    mt: 1,
-                                    color: '#616161',
-                                    whiteSpace: 'pre-line',
-                                    textAlign: 'left'
-                                }}>
-                                    {api.description || "No description available"}
-                                </Typography>
-                            </Box>
-                        </Box>
 
-                        {/* Always visible configuration section */}
-                        <Box sx={{ mt: 2 }}>
-                            <Typography variant="subtitle2" sx={{
-                                mb: 1,
-                                color: '#00796b',
-                                fontWeight: 600
-                            }}>
-                                Configuration
-                            </Typography>
-                            {renderApiConfiguration(apiDetailsMap[api.id] || api)}
-                        </Box>
-                    </Paper>
-                ))}
-            </Paper>
-        </Box>
+                                {[
+                                    { label: 'Provider', value: randomData.provider },
+                                    { label: 'Type', value: randomData.type },
+                                    { label: 'Version', value: randomData.version },
+                                    { label: 'Status', value: randomData.status },
+                                    { label: 'Visibility', value: randomData.visibility }
+                                ].map((item, index) => (
+                                    <React.Fragment key={index}>
+                                        <Typography variant="body1" sx={{
+                                            fontWeight: 500,
+                                            color: '#00796b',
+                                            alignSelf: 'center',
+                                            textAlign: 'left',
+                                        }}>
+                                            {item.label}:
+                                        </Typography>
+                                        <Typography variant="body1" sx={{
+                                            color: '#424242',
+                                            paddingLeft: '4px',
+                                            textAlign: 'left',
+                                        }}>
+                                            {item.value}
+                                        </Typography>
+                                    </React.Fragment>
+                                ))}
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: 3,
+                        mb: 2,
+                        p: 2,
+                        backgroundColor: '#e8f5e9',
+                        borderRadius: 1
+                    }}>
+                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#2e7d32' }}>
+                            API List
+                        </Typography>
+                        <Chip
+                            label={`Total: ${apis.length} APIs`}
+                            color="success"
+                            sx={{
+                                fontWeight: 600,
+                                fontSize: '0.875rem'
+                            }}
+                        />
+                    </Box>
+
+                    <Divider sx={{ marginBottom: 1 }} />
+
+                    {apis.map(api => (
+                        <Paper
+                            key={api.id}
+                            sx={{
+                                p: 3,
+                                mb: 2,
+                                borderRadius: 2,
+                                '&:hover': {
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                                },
+                                textAlign: 'left'
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'flex-start'
+                                }}
+                            >
+                                <Box>
+                                    <Typography
+                                        variant="h6"
+                                        onClick={() => handleApiNameClick(api.id, api.name)}
+                                        sx={{
+                                            color: '#00796b',
+                                            textAlign: 'left',
+                                            cursor: 'pointer',
+                                            '&:hover': {
+                                                textDecoration: 'underline'
+                                            }
+                                        }}
+                                    >
+                                        {api.name}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{
+                                        mt: 1,
+                                        color: '#616161',
+                                        whiteSpace: 'pre-line',
+                                        textAlign: 'left'
+                                    }}>
+                                        {api.description || "No description available"}
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {/* Always visible configuration section */}
+                            <Box sx={{ mt: 2 }}>
+                                <Typography variant="subtitle2" sx={{
+                                    mb: 1,
+                                    color: '#00796b',
+                                    fontWeight: 600
+                                }}>
+                                    Configuration
+                                </Typography>
+                                {renderApiConfiguration(apiDetailsMap[api.id] || api)}
+                            </Box>
+                        </Paper>
+                    ))}
+                </Paper>
+            </Box>
+        </>
     );
 };
 

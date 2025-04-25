@@ -1097,6 +1097,7 @@ import Alert from '@mui/material/Alert';
 import ApiView from './ApiView';
 import { ApiEndpointContext } from '../../Context/ApiEndpointContext';
 import { AuthContext } from '../../Context/AuthContext';
+import BreadcrumbComponent from '../../Components/BreadcrumbComponent';
 
 const ApiDetailsPage = () => {
     const { user } = useContext(AuthContext);
@@ -1125,7 +1126,7 @@ const ApiDetailsPage = () => {
     //             // Clear the state after scrolling
     //             navigate(location.pathname, { replace: true, state: {} });
     //         }, 300); // Small delay to ensure component renders
-            
+
     //         return () => clearTimeout(timer);
     //     }
     // }, [location.state, navigate, location.pathname]);
@@ -1133,17 +1134,17 @@ const ApiDetailsPage = () => {
     useEffect(() => {
         if (location.state?.shouldScrollToOperations && operationsRef.current) {
             const timer = setTimeout(() => {
-                operationsRef.current.scrollIntoView({ 
+                operationsRef.current.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
                 // Clear the state after scrolling
                 navigate(location.pathname, { replace: true, state: {} });
             }, 300); // Small delay to ensure component renders
-            
+
             return () => clearTimeout(timer);
         }
-    }, [location.state, navigate, location.pathname]);    
+    }, [location.state, navigate, location.pathname]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -1239,7 +1240,7 @@ const ApiDetailsPage = () => {
 
     const scrollToSection = (ref) => {
         if (ref?.current) {
-            ref.current.scrollIntoView({ 
+            ref.current.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
             });
@@ -1259,6 +1260,17 @@ const ApiDetailsPage = () => {
             // backgroundColor: '#f5f7fa', 
             minHeight: '100vh'
         }}>
+            <Box sx={{
+                // position: 'sticky',
+                top: 0,
+                zIndex: 1100,
+                backgroundColor: '#f8fafc',
+                // pt: 2,
+                pb: 1,
+                mb: 2
+            }}>
+                <BreadcrumbComponent />
+            </Box>
             {/* Keep Security & Access and Upload button exactly the same */}
             <div className='flex mb-6 gap-2'>
                 <Paper sx={{

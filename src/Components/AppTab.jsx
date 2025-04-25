@@ -341,7 +341,7 @@ const AppTab = ({ apiDetails }) => {
   const [description, setDescription] = useState("");
   const { selectedApiName } = useContext(ApiEndpointContext);
 
-  console.log("apiDetails: " + JSON.stringify(apiDetails, null, 2));
+  // console.log("apiDetails: " + JSON.stringify(apiDetails, null, 2));
 
   useEffect(() => {
     if (apiDetails?.description) {
