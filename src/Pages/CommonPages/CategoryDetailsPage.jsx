@@ -269,7 +269,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import {
     Typography,
     Box,
@@ -297,6 +297,7 @@ const CategoryDetailsPage = () => {
     const [expandedApi, setExpandedApi] = useState(null);
     const [apiDetailsMap, setApiDetailsMap] = useState({});
     const navigate = useNavigate();
+    const location = useLocation();
 
     const randomData = {
         provider: "Admin",
@@ -351,9 +352,21 @@ const CategoryDetailsPage = () => {
         }
     };
 
+    // const handleApiNameClick = (apiId, apiName) => {
+    //     const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
+    //     navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
+    // };
+
     const handleApiNameClick = (apiId, apiName) => {
         const pathPrefix = window.location.pathname.startsWith("/admin") ? "admin" : "user";
-        navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`);
+        navigate(`/${pathPrefix}/api-details/${encodeURIComponent(apiId)}`, {
+            state: {
+                from: {
+                    pathname: location.pathname,
+                    categoryName: categoryName
+                }
+            }
+        });
     };
 
     useEffect(() => {
@@ -440,7 +453,7 @@ const CategoryDetailsPage = () => {
 
     return (
         <>
-            <Box sx={{
+            {/* <Box sx={{
                 // position: 'sticky',
                 top: 0,
                 zIndex: 1100,
@@ -451,7 +464,22 @@ const CategoryDetailsPage = () => {
                 mt: 1
             }}>
                 <BreadcrumbComponent />
+            </Box> */}
+
+            <Box sx={{
+                position: 'sticky',
+                top: 65, // Adjust this to match your header height (64px is common for MUI AppBar)
+                zIndex: 1100,
+                backgroundColor: '#f8fafc',
+                pt: 2,
+                pb: 1,
+                mb: 1,
+                borderBottom: '1px solid #e0e0e0',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+                <BreadcrumbComponent />
             </Box>
+
             <Box
                 sx={{
                     padding: 2,
@@ -493,7 +521,7 @@ const CategoryDetailsPage = () => {
                     }}
                 >
                     <Accordion defaultExpanded>
-                        <AccordionSummary
+                        {/* <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
                             sx={{ backgroundColor: '#e1f5fe' }}
                         >
@@ -502,6 +530,30 @@ const CategoryDetailsPage = () => {
                                 color: '#00796b'
                             }} />
                             <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                General Information
+                            </Typography>
+                        </AccordionSummary> */}
+
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            sx={{
+                                backgroundColor: '#FFECB3', // Amber-100 equivalent
+                                minHeight: '48px', // Matching min-h-12 (3rem)
+                                '& .MuiAccordionSummary-content': {
+                                    alignItems: 'center' // Center items vertically
+                                }
+                            }}
+                        >
+                            <Info sx={{
+                                color: '#9CA3AF', // Gray-400 equivalent
+                                marginRight: '8px', // mr-2 equivalent
+                                fontSize: '1.25rem' // Matching icon size
+                            }} />
+                            <Typography variant="h6" sx={{
+                                fontWeight: 600,
+                                fontSize: '1.125rem', // text-lg
+                                color: '#111827' // Gray-900 for text
+                            }}>
                                 General Information
                             </Typography>
                         </AccordionSummary>

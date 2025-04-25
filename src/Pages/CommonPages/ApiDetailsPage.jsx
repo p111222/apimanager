@@ -1256,18 +1256,22 @@ const ApiDetailsPage = () => {
 
     return (
         <Box sx={{
-            p: 3,
+            // p: 3,
             // backgroundColor: '#f5f7fa', 
             minHeight: '100vh'
         }}>
             <Box sx={{
-                // position: 'sticky',
-                top: 0,
+                position: 'sticky',
+                top: 65, // Adjust this to match your header height (64px is default for MUI AppBar)
                 zIndex: 1100,
                 backgroundColor: '#f8fafc',
-                // pt: 2,
+                // pb: 1,
+                // p: 1,
+                pt: 2,
                 pb: 1,
-                mb: 2
+                mb: 2,
+                borderBottom: '1px solid #e0e0e0',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}>
                 <BreadcrumbComponent />
             </Box>
