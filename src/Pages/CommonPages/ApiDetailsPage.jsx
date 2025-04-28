@@ -1262,8 +1262,8 @@ const ApiDetailsPage = () => {
         }}>
             <Box sx={{
                 position: 'sticky',
-                top: 65, // Adjust this to match your header height (64px is default for MUI AppBar)
-                zIndex: 1100,
+                top: 65, 
+                zIndex: 600,
                 backgroundColor: '#f8fafc',
                 // pb: 1,
                 // p: 1,

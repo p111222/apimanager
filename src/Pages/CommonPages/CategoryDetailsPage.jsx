@@ -469,7 +469,7 @@ const CategoryDetailsPage = () => {
             <Box sx={{
                 position: 'sticky',
                 top: 65, // Adjust this to match your header height (64px is common for MUI AppBar)
-                zIndex: 1100,
+                zIndex: 600,
                 backgroundColor: '#f8fafc',
                 pt: 2,
                 pb: 1,

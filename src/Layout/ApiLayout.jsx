@@ -5,7 +5,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import DrawerComponent from '../Components/DrawerComponent';
 import ApiIcon from '@mui/icons-material/Api';
 import { useQuery } from 'react-query';
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
@@ -49,7 +49,18 @@ const ApiLayout = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const searchRef = useRef(null);
   const { user, loginTime } = useContext(AuthContext);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const formatLoginTime = () => {
     if (!loginTime) return "Not available";
@@ -70,8 +81,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        "http://localhost:8083/token",
-        // "/token",
+        // "http://localhost:8083/token",
+        "/token",
         null,
         {
           headers: {
@@ -417,7 +428,7 @@ const ApiLayout = () => {
 
             </div>
 
-            <Box sx={{ position: 'relative', marginRight: 2 }}>
+            <Box ref={searchRef} sx={{ position: 'relative', marginRight: 2 }}>
               <Paper
                 sx={{
                   display: 'flex',
@@ -448,7 +459,7 @@ const ApiLayout = () => {
                     width: 500,  // Matches the search bar width
                     maxHeight: 300,
                     overflowY: 'auto',
-                    zIndex: 1000,
+                    zIndex: 1300,
                     backgroundColor: 'white',
                     borderRadius: '4px',
                     boxShadow: 6,  // Enhanced shadow for better visibility
