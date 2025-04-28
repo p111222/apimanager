@@ -7,6 +7,8 @@ import Stack from "@mui/material/Stack";
 import HomeIcon from "@mui/icons-material/Home";
 import { AuthContext } from "../Context/AuthContext";
 import { Box } from "@mui/material";
+import { useQuery } from "react-query";
+import useAxiosPrivate from "../Hooks/useAxiosPrivate";
 
 // const BreadcrumbComponent = () => {
 //     const location = useLocation();
@@ -205,6 +207,14 @@ const BreadcrumbComponent = () => {
     const { user } = useContext(AuthContext);
     const { apiId, categoryName } = useParams();
     const navigate = useNavigate();
+    const axiosPrivate = useAxiosPrivate();
+
+    const { data: apiName, isLoading, error } = useQuery(['apiDetails', apiId], async () => {
+        // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+        const response = await axiosPrivate.get(`/getapi/${apiId}`);
+        return response.data;
+    });
+
 
     const pathnames = location.pathname.split("/").filter((x) => x);
     const dashboardPath = user?.roles?.includes("admin") ? "/admin/apidashboard" : "/user/apidashboard";
@@ -215,7 +225,7 @@ const BreadcrumbComponent = () => {
     // Function to clean path segments (remove admin/user and their dashboard)
     const getCleanPathSegments = () => {
         const segments = [...pathnames];
-        
+
         // Remove 'admin' or 'user' and their dashboard if present
         if (segments.length > 0 && (segments[0] === 'admin' || segments[0] === 'user')) {
             segments.shift(); // Remove 'admin' or 'user'
@@ -223,7 +233,7 @@ const BreadcrumbComponent = () => {
                 segments.shift(); // Remove 'apidashboard'
             }
         }
-        
+
         return segments;
     };
 
@@ -232,7 +242,7 @@ const BreadcrumbComponent = () => {
     return (
         <Stack spacing={2} sx={{ padding: "4px 8px" }}>
             <Breadcrumbs
-                sx={{ 
+                sx={{
                     fontSize: "0.85rem",
                     display: 'flex',
                     alignItems: 'center',
@@ -251,8 +261,8 @@ const BreadcrumbComponent = () => {
                     <Link
                         to={prevLocation.pathname}
                         state={{ from: location }}
-                        style={{ 
-                            textDecoration: "none", 
+                        style={{
+                            textDecoration: "none",
                             color: "inherit",
                             display: 'flex',
                             alignItems: 'center'
@@ -282,7 +292,7 @@ const BreadcrumbComponent = () => {
                                 </Typography>
                                 <NavigateNextIcon fontSize="small" sx={{ mx: 0.5 }} />
                                 <Typography color="text.primary" fontWeight={600} sx={{ whiteSpace: 'nowrap' }}>
-                                    {apiId}
+                                    {apiName.name}
                                 </Typography>
                             </Box>
                         );
@@ -303,20 +313,20 @@ const BreadcrumbComponent = () => {
                     }
 
                     return isLast ? (
-                        <Typography 
-                            key={index} 
-                            color="text.primary" 
+                        <Typography
+                            key={index}
+                            color="text.primary"
                             fontWeight={600}
                             sx={{ whiteSpace: 'nowrap' }}
                         >
                             {value.charAt(0).toUpperCase() + value.slice(1).replace(/-/g, ' ')}
                         </Typography>
                     ) : (
-                        <Link 
-                            key={index} 
+                        <Link
+                            key={index}
                             to={`/${pathnames.slice(0, pathnames.indexOf(value) + 1).join("/")}`}
-                            style={{ 
-                                textDecoration: "none", 
+                            style={{
+                                textDecoration: "none",
                                 color: "inherit",
                                 display: 'flex',
                                 alignItems: 'center',
