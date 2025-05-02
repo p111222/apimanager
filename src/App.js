@@ -30,15 +30,15 @@ const App = () => {
     const fetchUserDetails = async () => {
       try {
         const sessionResponse = await axiosPrivate.get('/auth/check-session');
-        console.log("sessionResponse.data.valid: " + sessionResponse.data);
+        // console.log("sessionResponse.data.valid: " + sessionResponse.data);
         setSessionValidity(sessionResponse.data);
 
         const regenerateTokenResponse = await axiosPrivate.get('/auth/regenerate-accesstoken');
-        console.log("regenerateTokenResponse.data: " + regenerateTokenResponse.data);
+        // console.log("regenerateTokenResponse.data: " + regenerateTokenResponse.data);
         setAccessToken(regenerateTokenResponse.data);
 
         const userResponse = await axiosPrivate.get('/auth/logged-in-user');
-        console.log("userResponse.data: ", JSON.stringify(userResponse.data, null, 2));
+        // console.log("userResponse.data: ", JSON.stringify(userResponse.data, null, 2));
 
         const roles = userResponse.data.roles || [];
         setUser({
@@ -102,13 +102,13 @@ const App = () => {
 
     // Admin role redirection
     if (isAdmin && Layout === ApiLayout && !window.location.pathname.startsWith("/admin")) {
-      console.log("Redirecting to Admin Dashboard");
+      // console.log("Redirecting to Admin Dashboard");
       return <Navigate to="/admin/apidashboard" />;
     }
 
     // IT User role redirection
     if (isItUser && Layout === ApiLayout && !window.location.pathname.startsWith("/user")) {
-      console.log("Redirecting to IT User Dashboard");
+      // console.log("Redirecting to IT User Dashboard");
       return <Navigate to="/user/apidashboard" />;
     }
 

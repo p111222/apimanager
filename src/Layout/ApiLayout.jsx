@@ -90,7 +90,7 @@ const ApiLayout = () => {
           },
         }
       );
-      console.log("Generated Bearer Token:", response.data.access_token);  // Print the token
+      // console.log("Generated Bearer Token:", response.data.access_token);  
       return response.data.access_token;
     } catch (error) {
       console.error("Error fetching Bearer token:", error.response?.data || error.message);
@@ -216,7 +216,7 @@ const ApiLayout = () => {
   
       const uniqueResults = Array.from(new Map(combinedResults.map(item => [item.id, item])).values());
   
-      console.log("Search Response:", uniqueResults);
+      // console.log("Search Response:", uniqueResults);
       setSearchResults(uniqueResults);
       setShowSuggestions(true);
     } catch (error) {
@@ -289,7 +289,7 @@ const ApiLayout = () => {
         });
         const resolvedApiList = await Promise.all(apiPromises);
         setApiList(resolvedApiList);
-        console.log("Resolved API List:", JSON.stringify(resolvedApiList, null, 2));
+        // console.log("Resolved API List:", JSON.stringify(resolvedApiList, null, 2));
       }
     };
     fetchApiList();

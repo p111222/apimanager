@@ -341,7 +341,7 @@ const AppTab = ({ apiDetails }) => {
   const [description, setDescription] = useState("");
   const { selectedApiName } = useContext(ApiEndpointContext);
 
-  // console.log("apiDetails: " + JSON.stringify(apiDetails, null, 2));
+  // console.log("apiDetails in app tab: " + JSON.stringify(apiDetails, null, 2));
 
   useEffect(() => {
     if (apiDetails?.description) {
@@ -363,7 +363,7 @@ const AppTab = ({ apiDetails }) => {
           },
         }
       );
-      console.log("Generated Bearer Token:", response.data.access_token);
+      // console.log("Generated Bearer Token:", response.data.access_token);
       return response.data.access_token;
     } catch (error) {
       console.error("Error fetching Bearer token:", error.response?.data || error.message);
@@ -424,7 +424,7 @@ const AppTab = ({ apiDetails }) => {
         }
       );
 
-      console.log("API Updated Successfully:", response.data);
+      // console.log("API Updated Successfully:", response.data);
       alert("API details updated successfully!");
 
       await fetchDescription();
@@ -470,6 +470,9 @@ const AppTab = ({ apiDetails }) => {
   const methods = Object.keys(endpointOperations).map(method => method.toUpperCase());
   const primaryMethod = methods[0] || "GET";
 
+  // console.log("primaryMethod"+primaryMethod);
+  
+
   // Get the first operation (POST in your case)
   const operation = endpointOperations[methods[0].toLowerCase()] || {};
 
@@ -479,6 +482,13 @@ const AppTab = ({ apiDetails }) => {
   const requestBody = operation?.requestBody?.content?.["application/json"]?.schema?.properties || {};
   const responseExample = operation?.responses?.["200"]?.content?.["application/json"]?.schema?.properties || {};
 
+  // console.log("Headers:", JSON.stringify(headers, null, 2));
+  // console.log("Query Params:", JSON.stringify(queryParams, null, 2));
+  // console.log("Path Params:", JSON.stringify(pathParams, null, 2));
+  // console.log("Request Body:", JSON.stringify(requestBody, null, 2));
+  // console.log("Response Example:", JSON.stringify(responseExample, null, 2));
+  
+  
   return (
     <Box
       sx={{

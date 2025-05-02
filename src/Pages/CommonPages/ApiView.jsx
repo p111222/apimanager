@@ -316,17 +316,26 @@ const ApiView = ({ apiId, endpoint }) => {
                 );
 
                 const endpointData = response.data.paths[endpoint];
+                console.log("endpointData" + JSON.stringify(endpointData, null, 2));
+
                 if (endpointData) {
                     setApiDetails({ paths: { [endpoint]: endpointData } });
                 }
 
                 // Generate cURL command and set API response content for the selected endpoint
                 if (endpointData) {
-                    const operation = endpointData.post || endpointData.get;
+                    const operation = endpointData.post || endpointData.get || endpointData.put;
+                    console.log("response.data" + JSON.stringify(response.data, null, 2));
+
                     const generatedCurl = generateCurlCommand(response.data);
+                    console.log("generatedCurl" + generatedCurl);
+
                     setCurlCommand(generatedCurl);
+                    console.log("operation" + JSON.stringify(operation, null, 2));
 
                     const responseContent = operation?.responses?.["200"]?.content?.["application/json"]?.schema?.properties || {};
+                    console.log("responseContent" + JSON.stringify(responseContent, null, 2));
+
                     setApiResponse(JSON.stringify(responseContent, null, 2));
                 }
             } catch (error) {
@@ -344,25 +353,87 @@ const ApiView = ({ apiId, endpoint }) => {
             fetchApiDetails();
         }
     }, [apiId, endpoint]);
+    console.log("apiresponse above" + apiResponse);
+
+
+    // useEffect(() => {
+    //     if (apiDetails) {
+    //         const operation = apiDetails.paths[endpoint]?.post || apiDetails.paths[endpoint]?.get || apiDetails.paths[endpoint]?.put;
+    //         const responseContent = operation?.responses?.["200"]?.content?.["application/json"]?.schema?.properties || {};
+    //         setApiResponse(JSON.stringify(responseContent, null, 2));
+
+    //         const errorContent = operation?.responses?.[selectedError]?.content?.["application/json"]?.schema?.properties || {};
+    //         setErrorResponse(JSON.stringify(errorContent, null, 2));
+    //     }
+    // }, [selectedError, apiDetails]);
 
     useEffect(() => {
-        if (apiDetails) {
-            const operation = apiDetails.paths[endpoint]?.post || apiDetails.paths[endpoint]?.get;
-            const responseContent = operation?.responses?.["200"]?.content?.["application/json"]?.schema?.properties || {};
-            setApiResponse(JSON.stringify(responseContent, null, 2));
+        if (apiDetails && selectedError) {
+            const httpMethods = ['get', 'post', 'put', 'delete', 'patch'];
+            let errorContent = {};
 
-            const errorContent = operation?.responses?.[selectedError]?.content?.["application/json"]?.schema?.properties || {};
+            // Find the first method that has the selected error
+            for (const method of httpMethods) {
+                const operation = apiDetails.paths[endpoint]?.[method];
+                if (operation?.responses?.[selectedError]) {
+                    errorContent = operation.responses[selectedError]?.content?.["application/json"]?.schema?.properties || {};
+                    break;
+                }
+            }
+
             setErrorResponse(JSON.stringify(errorContent, null, 2));
         }
-    }, [selectedError, apiDetails]);
+    }, [selectedError, apiDetails, endpoint]);
+
+    console.log("api details in apiview" + JSON.stringify(apiDetails, null, 2));
+    console.log("curl command" + curlCommand);
+    console.log("apiresponse below" + apiResponse);
+
+    // Generate cURL command based on API details
+    // const generateCurlCommand = (details) => {
+    //     const endpointData = details.paths[endpoint];
+    //     const operation = endpointData?.post || endpointData?.get || endpointData?.put ;
+    //     const method = operation ? (endpointData.post ? "POST" : "GET") : "GET";
+
+    //     let curl = `curl -X ${method} "${endpoint}" \\\n`;
+
+    //     // Add headers
+    //     const headers = operation?.parameters?.filter((param) => param.in === "header") || [];
+    //     headers.forEach((header) => {
+    //         const headerName = header.name;
+    //         const headerValue = header.schema?.example || "";
+    //         curl += `    -H "${headerName}: ${headerValue}" \\\n`;
+    //     });
+
+    //     // Add request body (for POST or PUT)
+    //     if (method === "POST" || method === "PUT") {
+    //         const body = operation?.requestBody?.content?.["application/json"]?.schema?.properties || {};
+    //         const requestBody = JSON.stringify(
+    //             Object.fromEntries(Object.entries(body).map(([key, value]) => [key, value.example || ""])),
+    //             null,
+    //             2
+    //         );
+    //         curl += `    -d '${requestBody}'`;
+    //     }
+
+    //     return curl;
+    // };
 
     // Generate cURL command based on API details
     const generateCurlCommand = (details) => {
         const endpointData = details.paths[endpoint];
-        const operation = endpointData?.post || endpointData?.get;
-        const method = operation ? (endpointData.post ? "POST" : "GET") : "GET";
+        // Determine the HTTP method (prioritize in this order: POST, PUT, DELETE, GET)
+        const operation = endpointData?.post || endpointData?.put || endpointData?.delete || endpointData?.get;
+        let method = "GET";
+
+        if (endpointData?.post) method = "POST";
+        else if (endpointData?.put) method = "PUT";
+        else if (endpointData?.delete) method = "DELETE";
 
         let curl = `curl -X ${method} "${endpoint}" \\\n`;
+
+        // console.log("operation" + JSON.stringify(operation, null, 2));
+
 
         // Add headers
         const headers = operation?.parameters?.filter((param) => param.in === "header") || [];
@@ -372,15 +443,17 @@ const ApiView = ({ apiId, endpoint }) => {
             curl += `    -H "${headerName}: ${headerValue}" \\\n`;
         });
 
-        // Add request body (for POST or PUT)
-        if (method === "POST" || method === "PUT") {
+        // Add request body (for POST, PUT, and potentially DELETE)
+        if (method === "POST" || method === "PUT" || (method === "DELETE" && operation?.requestBody)) {
             const body = operation?.requestBody?.content?.["application/json"]?.schema?.properties || {};
             const requestBody = JSON.stringify(
                 Object.fromEntries(Object.entries(body).map(([key, value]) => [key, value.example || ""])),
                 null,
                 2
             );
-            curl += `    -d '${requestBody}'`;
+            if (requestBody !== "{}") {
+                curl += `    -d '${requestBody.replace(/\n/g, '\\n')}'`; // Handle newlines in JSON
+            }
         }
 
         return curl;
@@ -403,10 +476,10 @@ const ApiView = ({ apiId, endpoint }) => {
     };
 
     return (
-        <Box sx={{ 
+        <Box sx={{
             width: '100%',
             maxWidth: '100%',
-            overflowX: 'hidden' 
+            overflowX: 'hidden'
         }}>
             <Box sx={{ borderBottom: 1, borderColor: "divider", marginTop: '8px' }}>
                 <Tabs value={selectedTab} onChange={handleTabChange} aria-label="API Tabs">
@@ -417,15 +490,15 @@ const ApiView = ({ apiId, endpoint }) => {
                     <Tab label="Authorization" />
                 </Tabs>
             </Box>
-    
-            <Box sx={{ 
-                display: 'flex', 
+
+            <Box sx={{
+                display: 'flex',
                 mt: 4,
                 flexDirection: { xs: 'column', md: 'row' }, // Stack on mobile, row on desktop
                 width: '100%'
             }}>
                 {/* Left Panel - Tabs Content */}
-                <Box sx={{ 
+                <Box sx={{
                     width: { xs: '100%', md: '50%' },
                     p: 1,
                     boxSizing: 'border-box' // Ensures padding is included in width calculation
@@ -438,27 +511,27 @@ const ApiView = ({ apiId, endpoint }) => {
                         {selectedTab === 4 && <AuthorizationTab apiDetails={apiDetails} />}
                     </Box>
                 </Box>
-    
+
                 {/* Right Panel - Request/Response */}
-                <Box sx={{ 
+                <Box sx={{
                     width: { xs: '100%', md: '50%' },
                     p: { xs: 1, md: 2 },
                     boxSizing: 'border-box'
                 }}>
                     {/* API Request */}
-                    <Box sx={{ 
-                        bgcolor: 'grey.800', 
-                        p: 2, 
-                        borderRadius: 1, 
+                    <Box sx={{
+                        bgcolor: 'grey.800',
+                        p: 2,
+                        borderRadius: 1,
                         mb: 2,
                         width: '100%',
                         textAlign: 'left'
                     }}>
-                        <Box sx={{ 
-                            display: 'flex', 
-                            justifyContent: 'space-between', 
-                            alignItems: 'center', 
-                            mb: 2 
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 2
                         }}>
                             <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 'bold' }}>
                                 API Request
@@ -467,7 +540,7 @@ const ApiView = ({ apiId, endpoint }) => {
                                 size="small"
                                 variant="contained"
                                 onClick={() => copyToClipboard(curlCommand, "request")}
-                                sx={{ 
+                                sx={{
                                     bgcolor: 'grey.700',
                                     color: 'white',
                                     '&:hover': { bgcolor: 'grey.600' },
@@ -479,15 +552,15 @@ const ApiView = ({ apiId, endpoint }) => {
                                 {copied.request ? "✅ Copied" : "📋 Copy"}
                             </Button>
                         </Box>
-                        <Box sx={{ 
-                            bgcolor: 'grey.900', 
-                            color: 'warning.light', 
-                            p: 2, 
+                        <Box sx={{
+                            bgcolor: 'grey.900',
+                            color: 'warning.light',
+                            p: 2,
                             borderRadius: 1,
                             // height: 160,
                             overflow: 'auto'
                         }}>
-                            <pre style={{ 
+                            <pre style={{
                                 margin: 0,
                                 whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word' // This ensures long lines wrap
@@ -496,20 +569,20 @@ const ApiView = ({ apiId, endpoint }) => {
                             </pre>
                         </Box>
                     </Box>
-    
+
                     {/* API Response */}
-                    <Box sx={{ 
-                        bgcolor: 'grey.800', 
-                        p: 2, 
-                        borderRadius: 1, 
-                        mb: 2, 
+                    <Box sx={{
+                        bgcolor: 'grey.800',
+                        p: 2,
+                        borderRadius: 1,
+                        mb: 2,
                         textAlign: 'left'
                     }}>
-                        <Box sx={{ 
-                            display: 'flex', 
-                            justifyContent: 'space-between', 
-                            alignItems: 'center', 
-                            mb: 2 
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 2
                         }}>
                             <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 'bold' }}>
                                 API Response
@@ -518,7 +591,7 @@ const ApiView = ({ apiId, endpoint }) => {
                                 size="small"
                                 variant="contained"
                                 onClick={() => copyToClipboard(apiResponse, "response")}
-                                sx={{ 
+                                sx={{
                                     bgcolor: 'grey.700',
                                     color: 'white',
                                     '&:hover': { bgcolor: 'grey.600' },
@@ -530,15 +603,15 @@ const ApiView = ({ apiId, endpoint }) => {
                                 {copied.response ? "✅ Copied" : "📋 Copy"}
                             </Button>
                         </Box>
-                        <Box sx={{ 
-                            bgcolor: 'grey.900', 
-                            color: 'success.light', 
-                            p: 2, 
+                        <Box sx={{
+                            bgcolor: 'grey.900',
+                            color: 'success.light',
+                            p: 2,
                             borderRadius: 1,
                             // height: 160,
                             overflow: 'auto'
                         }}>
-                            <pre style={{ 
+                            <pre style={{
                                 margin: 0,
                                 whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word'
@@ -547,19 +620,19 @@ const ApiView = ({ apiId, endpoint }) => {
                             </pre>
                         </Box>
                     </Box>
-    
+
                     {/* Error Response */}
-                    <Box sx={{ 
-                        bgcolor: 'grey.800', 
-                        p: 2, 
+                    <Box sx={{
+                        bgcolor: 'grey.800',
+                        p: 2,
                         borderRadius: 1,
-                        textAlign: 'left'   
+                        textAlign: 'left'
                     }}>
-                        <Box sx={{ 
-                            display: 'flex', 
-                            justifyContent: 'space-between', 
-                            alignItems: 'center', 
-                            mb: 2 
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 2
                         }}>
                             <Typography variant="subtitle2" sx={{ color: 'white', fontWeight: 'bold' }}>
                                 Error Response
@@ -578,27 +651,39 @@ const ApiView = ({ apiId, endpoint }) => {
                                     <MenuItem value="" disabled>
                                         <em>Select an error</em>
                                     </MenuItem>
-                                    {apiDetails?.paths?.[endpoint]?.post?.responses ? (
-                                        Object.keys(apiDetails.paths[endpoint].post.responses)
-                                            .filter(code => code !== "200")
-                                            .map((code) => (
+                                    {(() => {
+                                        // Get all available HTTP methods for this endpoint
+                                        const httpMethods = ['get', 'post', 'put', 'delete', 'patch'];
+                                        const allErrorCodes = new Set();
+
+                                        // Collect all error codes from all methods
+                                        httpMethods.forEach(method => {
+                                            const responses = apiDetails?.paths?.[endpoint]?.[method]?.responses;
+                                            if (responses) {
+                                                Object.keys(responses)
+                                                    .filter(code => code !== "200")
+                                                    .forEach(code => allErrorCodes.add(code));
+                                            }
+                                        });
+
+                                        if (allErrorCodes.size > 0) {
+                                            return Array.from(allErrorCodes).map(code => (
                                                 <MenuItem key={code} value={code}>{code}</MenuItem>
-                                            ))
-                                    ) : (
-                                        <MenuItem disabled>No errors available</MenuItem>
-                                    )}
+                                            ));
+                                        }
+                                        return <MenuItem disabled>No errors available</MenuItem>;
+                                    })()}
                                 </Select>
                             </FormControl>
                         </Box>
-                        <Box sx={{ 
-                            bgcolor: 'grey.900', 
-                            color: 'error.light', 
-                            p: 2, 
+                        <Box sx={{
+                            bgcolor: 'grey.900',
+                            color: 'error.light',
+                            p: 2,
                             borderRadius: 1,
-                            // height: 160,
                             overflow: 'auto'
                         }}>
-                            <pre style={{ 
+                            <pre style={{
                                 margin: 0,
                                 whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word'

@@ -7,7 +7,7 @@ const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
     const { user, setUser, sessionValidity, setSessionValidity, accessToken } = useContext(AuthContext);
 
-    console.log(sessionValidity);
+    // console.log(sessionValidity);
 
     useEffect(() => {
         const requestIntercept = axiosPrivate.interceptors.request.use(
@@ -18,7 +18,7 @@ const useAxiosPrivate = () => {
 
                 try {
                     const response = await axiosPrivate.get(`/auth/check-session`);
-                    console.log("response.data.valid"+response.data);
+                    // console.log("response.data.valid"+response.data);
                     if (response.data === 'valid') {
                         setSessionValidity('valid');
                         if (!config.headers['Authorization']) {
