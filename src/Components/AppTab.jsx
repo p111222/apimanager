@@ -371,71 +371,71 @@ const AppTab = ({ apiDetails }) => {
     }
   };
 
-  const handleUpdate = async () => {
-    if (!apiId) {
-      console.error("API ID is not available.");
-      alert("API ID is missing. Unable to update.");
-      return;
-    }
+  // const handleUpdate = async () => {
+  //   if (!apiId) {
+  //     console.error("API ID is not available.");
+  //     alert("API ID is missing. Unable to update.");
+  //     return;
+  //   }
 
-    try {
-      const token = await getBearerToken();
-      const name = apiDetails?.info?.title || apiDetails?.name || "Default API Name";
-      const version = apiDetails?.info?.version || apiDetails?.version || "1.0.0";
-      const context = apiDetails?.context || "/default-context";
-      const provider = apiDetails?.provider || "default-provider";
-      const lifeCycleStatus = apiDetails?.lifeCycleStatus || "CREATED";
+  //   try {
+  //     const token = await getBearerToken();
+  //     const name = apiDetails?.info?.title || apiDetails?.name || "Default API Name";
+  //     const version = apiDetails?.info?.version || apiDetails?.version || "1.0.0";
+  //     const context = apiDetails?.context || "/default-context";
+  //     const provider = apiDetails?.provider || "default-provider";
+  //     const lifeCycleStatus = apiDetails?.lifeCycleStatus || "CREATED";
 
-      const operations = Object.keys(apiDetails?.paths || {}).flatMap((path) =>
-        Object.keys(apiDetails.paths[path]).map((method) => ({
-          target: path,
-          verb: method.toUpperCase(),
-          authType: "None",
-          throttlingPolicy: "Unlimited",
-        }))
-      );
+  //     const operations = Object.keys(apiDetails?.paths || {}).flatMap((path) =>
+  //       Object.keys(apiDetails.paths[path]).map((method) => ({
+  //         target: path,
+  //         verb: method.toUpperCase(),
+  //         authType: "None",
+  //         throttlingPolicy: "Unlimited",
+  //       }))
+  //     );
 
-      if (operations.length === 0) {
-        console.error("No valid operations found for the API.");
-        alert("API must have at least one resource defined.");
-        return;
-      }
+  //     if (operations.length === 0) {
+  //       console.error("No valid operations found for the API.");
+  //       alert("API must have at least one resource defined.");
+  //       return;
+  //     }
 
-      const updatedData = {
-        name,
-        description,
-        context,
-        version,
-        provider,
-        lifeCycleStatus,
-        operations,
-      };
+  //     const updatedData = {
+  //       name,
+  //       description,
+  //       context,
+  //       version,
+  //       provider,
+  //       lifeCycleStatus,
+  //       operations,
+  //     };
 
-      const response = await axiosPrivate.put(
-        // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
-        // `/am/publisher/v4/apis/${apiId}`,
-        `/${apiId}`,
-        updatedData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  //     const response = await axiosPrivate.put(
+  //       // `https://api.kriate.co.in:8344/api/am/publisher/v4/apis/${apiId}`,
+  //       // `/am/publisher/v4/apis/${apiId}`,
+  //       `/${apiId}`,
+  //       updatedData,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      // console.log("API Updated Successfully:", response.data);
-      alert("API details updated successfully!");
+  //     // console.log("API Updated Successfully:", response.data);
+  //     alert("API details updated successfully!");
 
-      await fetchDescription();
+  //     await fetchDescription();
 
-      setEditingDescription(false);
+  //     setEditingDescription(false);
 
-    } catch (error) {
-      console.error("Error updating API:", error.response?.data || error.message);
-      alert("Error updating API details");
-    }
-  };
+  //   } catch (error) {
+  //     console.error("Error updating API:", error.response?.data || error.message);
+  //     alert("Error updating API details");
+  //   }
+  // };
 
   const fetchDescription = async () => {
     try {

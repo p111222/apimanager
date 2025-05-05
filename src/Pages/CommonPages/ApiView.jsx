@@ -385,9 +385,9 @@ const ApiView = ({ apiId, endpoint }) => {
         }
     }, [selectedError, apiDetails, endpoint]);
 
-    console.log("api details in apiview" + JSON.stringify(apiDetails, null, 2));
-    console.log("curl command" + curlCommand);
-    console.log("apiresponse below" + apiResponse);
+    // console.log("api details in apiview" + JSON.stringify(apiDetails, null, 2));
+    // console.log("curl command" + curlCommand);
+    // console.log("apiresponse below" + apiResponse);
 
     // Generate cURL command based on API details
     // const generateCurlCommand = (details) => {

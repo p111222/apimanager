@@ -370,7 +370,9 @@ const UploadApi = () => {
     try {
       const response = await axiosPrivate.post(
         // "http://127.0.0.1:8000/bulk-create-apis", 
-        "/bulk-create-apis", 
+        // "/bulk-create-apis", 
+        // "http://127.0.0.1:8000/upload_excel/",
+        "/upload_excel/",
         formData,
         {
           headers: {
