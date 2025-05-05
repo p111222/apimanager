@@ -101,14 +101,6 @@ const ApiLayout = () => {
   const fetchCategories = async () => {
     try {
       const token = await getBearerToken();
-      // const response = await axiosPrivate.get(
-      //     'https://43.204.108.73:8344/api/am/publisher/v4/api-categories',
-      //     {
-      //         headers: {
-      //             Authorization: `Bearer ${token}`
-      //         }
-      //     }
-      // );
       const response = await axiosPrivate.get(
         // 'http://localhost:8086/api/categories'
         '/categories'
@@ -198,24 +190,24 @@ const ApiLayout = () => {
         `gatewayVendor:${query}`,
         `advertiseOnly:${query}`,
       ];
-  
+
       const response = await axiosPrivate.get(
         // `http://localhost:8088/api/search?query=${encodeURIComponent(query)}`,
         `/search?query=${encodeURIComponent(query)}`,
         {
           headers: {
-            Authorization: `Bearer 9919f507-82e2-3bf1-9ba8-750aba735bc3`, 
+            Authorization: `Bearer 9919f507-82e2-3bf1-9ba8-750aba735bc3`,
           },
         }
       );
-  
+
       let combinedResults = [];
       if (response.data.list) {
         combinedResults = response.data.list;
       }
-  
+
       const uniqueResults = Array.from(new Map(combinedResults.map(item => [item.id, item])).values());
-  
+
       // console.log("Search Response:", uniqueResults);
       setSearchResults(uniqueResults);
       setShowSuggestions(true);
@@ -223,7 +215,7 @@ const ApiLayout = () => {
       console.error("Error searching APIs:", error.response?.data || error.message);
     }
   };
-  
+
 
   const handleSearchChange = useCallback(
     debounce((query) => {

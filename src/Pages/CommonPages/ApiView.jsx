@@ -355,18 +355,6 @@ const ApiView = ({ apiId, endpoint }) => {
     }, [apiId, endpoint]);
     console.log("apiresponse above" + apiResponse);
 
-
-    // useEffect(() => {
-    //     if (apiDetails) {
-    //         const operation = apiDetails.paths[endpoint]?.post || apiDetails.paths[endpoint]?.get || apiDetails.paths[endpoint]?.put;
-    //         const responseContent = operation?.responses?.["200"]?.content?.["application/json"]?.schema?.properties || {};
-    //         setApiResponse(JSON.stringify(responseContent, null, 2));
-
-    //         const errorContent = operation?.responses?.[selectedError]?.content?.["application/json"]?.schema?.properties || {};
-    //         setErrorResponse(JSON.stringify(errorContent, null, 2));
-    //     }
-    // }, [selectedError, apiDetails]);
-
     useEffect(() => {
         if (apiDetails && selectedError) {
             const httpMethods = ['get', 'post', 'put', 'delete', 'patch'];
@@ -389,37 +377,6 @@ const ApiView = ({ apiId, endpoint }) => {
     // console.log("curl command" + curlCommand);
     // console.log("apiresponse below" + apiResponse);
 
-    // Generate cURL command based on API details
-    // const generateCurlCommand = (details) => {
-    //     const endpointData = details.paths[endpoint];
-    //     const operation = endpointData?.post || endpointData?.get || endpointData?.put ;
-    //     const method = operation ? (endpointData.post ? "POST" : "GET") : "GET";
-
-    //     let curl = `curl -X ${method} "${endpoint}" \\\n`;
-
-    //     // Add headers
-    //     const headers = operation?.parameters?.filter((param) => param.in === "header") || [];
-    //     headers.forEach((header) => {
-    //         const headerName = header.name;
-    //         const headerValue = header.schema?.example || "";
-    //         curl += `    -H "${headerName}: ${headerValue}" \\\n`;
-    //     });
-
-    //     // Add request body (for POST or PUT)
-    //     if (method === "POST" || method === "PUT") {
-    //         const body = operation?.requestBody?.content?.["application/json"]?.schema?.properties || {};
-    //         const requestBody = JSON.stringify(
-    //             Object.fromEntries(Object.entries(body).map(([key, value]) => [key, value.example || ""])),
-    //             null,
-    //             2
-    //         );
-    //         curl += `    -d '${requestBody}'`;
-    //     }
-
-    //     return curl;
-    // };
-
-    // Generate cURL command based on API details
     const generateCurlCommand = (details) => {
         const endpointData = details.paths[endpoint];
         // Determine the HTTP method (prioritize in this order: POST, PUT, DELETE, GET)
@@ -433,7 +390,6 @@ const ApiView = ({ apiId, endpoint }) => {
         let curl = `curl -X ${method} "${endpoint}" \\\n`;
 
         // console.log("operation" + JSON.stringify(operation, null, 2));
-
 
         // Add headers
         const headers = operation?.parameters?.filter((param) => param.in === "header") || [];
