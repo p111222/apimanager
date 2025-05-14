@@ -72,8 +72,8 @@ const ApiLayout = () => {
   const { data: apiData, error: apiDataError, isLoading: apiDataLoading } = useQuery(
     ['apiData'],
     async () => {
-      // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-      const response = await axiosPrivate.get("/getAll");
+      const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+      // const response = await axiosPrivate.get("/getAll");
       return response.data;
     },
   );
@@ -81,8 +81,8 @@ const ApiLayout = () => {
   const getBearerToken = async () => {
     try {
       const response = await axiosPrivate.get(
-        // "http://localhost:8083/token",
-        "/token",
+        "http://localhost:8083/token",
+        // "/token",
         null,
         {
           headers: {
@@ -102,8 +102,8 @@ const ApiLayout = () => {
     try {
       const token = await getBearerToken();
       const response = await axiosPrivate.get(
-        // 'http://localhost:8086/api/categories'
-        '/categories'
+        'http://localhost:8086/api/categories'
+        // '/categories'
       );
       return response.data.list;
     } catch (error) {
@@ -116,8 +116,8 @@ const ApiLayout = () => {
     try {
 
       const response = await axiosPrivate.get(
-        // `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
-        `/category-details?category=${encodeURIComponent(categoryName)}`
+        `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
+        // `/category-details?category=${encodeURIComponent(categoryName)}`
       );
 
       return response.data.list || [];
@@ -192,8 +192,8 @@ const ApiLayout = () => {
       ];
 
       const response = await axiosPrivate.get(
-        // `http://localhost:8088/api/search?query=${encodeURIComponent(query)}`,
-        `/search?query=${encodeURIComponent(query)}`,
+        `http://localhost:8088/api/search?query=${encodeURIComponent(query)}`,
+        // `/search?query=${encodeURIComponent(query)}`,
         {
           headers: {
             Authorization: `Bearer 9919f507-82e2-3bf1-9ba8-750aba735bc3`,
@@ -253,8 +253,8 @@ const ApiLayout = () => {
 
   const fetchApiDetails = async (apiId) => {
     try {
-      // const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
-      const response = await axiosPrivate.get(`/getapi/${apiId}`);
+      const response = await axiosPrivate.get(`http://localhost:8081/api/getapi/${apiId}`);
+      // const response = await axiosPrivate.get(`/getapi/${apiId}`);
       const endpoints = response.data.operations.map((op) => ({
         name: op.target,
         method: op.verb,
