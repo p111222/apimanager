@@ -353,7 +353,7 @@ const ApiView = ({ apiId, endpoint }) => {
             fetchApiDetails();
         }
     }, [apiId, endpoint]);
-    console.log("apiresponse above" + apiResponse);
+    console.log("apiDetails above" + JSON.stringify(apiDetails, null, 2));
 
     useEffect(() => {
         if (apiDetails && selectedError) {
@@ -408,7 +408,7 @@ const ApiView = ({ apiId, endpoint }) => {
                 2
             );
             if (requestBody !== "{}") {
-                curl += `    -d '${requestBody.replace(/\n/g, '\\n')}'`; // Handle newlines in JSON
+                curl += `    -d '${requestBody.replace(/\n/g, '\\n')}'`; 
             }
         }
 
