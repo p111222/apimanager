@@ -310,8 +310,8 @@ const CategoryDetailsPage = () => {
     const getBearerToken = async () => {
         try {
             const response = await axiosPrivate.get(
-                "http://localhost:8083/token",
-                // "/token",
+                // "http://localhost:8083/token",
+                "/token",
                 null,
                 {
                     headers: {
@@ -330,8 +330,8 @@ const CategoryDetailsPage = () => {
         try {
             const token = await getBearerToken();
             const response = await axiosPrivate.get(
-                `http://localhost:8081/api/getapi/${apiId}`
-                // `/getapi/${apiId}`
+                // `http://localhost:8081/api/getapi/${apiId}`
+                `/getapi/${apiId}`
             );
             return response.data;
         } catch (error) {
@@ -374,8 +374,8 @@ const CategoryDetailsPage = () => {
             try {
                 const token = await getBearerToken();
                 const response = await axiosPrivate.get(
-                    `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
-                    // `/category-details?category=${encodeURIComponent(categoryName)}`
+                    // `http://localhost:8087/api/category-details?category=${encodeURIComponent(categoryName)}`
+                    `/category-details?category=${encodeURIComponent(categoryName)}`
                 );
                 setApis(response.data.list || []);
             } catch (error) {

@@ -369,8 +369,8 @@ const UploadApi = () => {
   
     try {
       const response = await axiosPrivate.post(
-        "http://127.0.0.1:8000/upload_excel/",
-        // "/upload_excel/",
+        // "http://127.0.0.1:8000/upload_excel/",
+        "/upload_excel/",
         formData,
         {
           headers: {
