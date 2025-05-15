@@ -22,10 +22,10 @@
 
 //   const handleUpload = async () => {
 //     if (!file) return;
-  
+
 //     const formData = new FormData();
 //     formData.append("file", file);
-  
+
 //     try {
 //       // const response = await axiosPrivate.post("http://127.0.0.1:5000/api/create-apis", formData, {
 //       const response = await axiosPrivate.post("/create-apis", formData, {
@@ -33,7 +33,7 @@
 //           "Content-Type": "multipart/form-data",
 //         },
 //       });
-  
+
 //       if (response.status === 200) {
 //         setUploadStatus("✅ File uploaded successfully!");
 //       } else {
@@ -43,7 +43,7 @@
 //       setUploadStatus(`❌ Error: ${error.response?.data?.message || error.message}`);
 //     }
 //   };
-  
+
 
 //   return (
 //     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md">
@@ -141,7 +141,7 @@
 
 //   const handleUpload = async () => {
 //     if (!file) return;
-    
+
 //     setIsUploading(true);
 //     setUploadStatus("");
 
@@ -188,7 +188,7 @@
 //         outline: 'none'
 //       }}>
 //         <Typography variant="h6" sx={{ mb: 3 }}>Upload API File</Typography>
-        
+
 //         {/* File Upload Area */}
 //         <Box 
 //           sx={{
@@ -322,7 +322,7 @@ const UploadApi = () => {
 
   // const handleUpload = async () => {
   //   if (!file) return;
-    
+
   //   setIsUploading(true);
   //   setUploadStatus("");
   //   setResults([]);
@@ -341,7 +341,7 @@ const UploadApi = () => {
   //       setResults(response.data.results);
   //       const successCount = response.data.results.filter(r => r.status === "success").length;
   //       const errorCount = response.data.results.filter(r => r.status === "failed").length;
-        
+
   //       setUploadStatus(
   //         `✅ ${successCount} APIs created successfully${errorCount > 0 ? `, ❌ ${errorCount} failed` : ''}`
   //       );
@@ -359,14 +359,14 @@ const UploadApi = () => {
 
   const handleUpload = async () => {
     if (!file) return;
-    
+
     setIsUploading(true);
     setUploadStatus("");
     setResults([]);
-  
+
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
       const response = await axiosPrivate.post(
         // "http://127.0.0.1:8000/upload_excel/",
@@ -378,14 +378,14 @@ const UploadApi = () => {
           },
         }
       );
-  
+
       if (response.data?.results) {
         setResults(response.data.results);
-        const successCount = response.data.results.filter(r => 
+        const successCount = response.data.results.filter(r =>
           r.status === "success").length;
-        const errorCount = response.data.results.filter(r => 
+        const errorCount = response.data.results.filter(r =>
           r.status === "failed").length;
-        
+
         setUploadStatus(
           `✅ ${successCount} APIs processed successfully` +
           (errorCount > 0 ? `, ❌ ${errorCount} failed` : '')
@@ -393,13 +393,13 @@ const UploadApi = () => {
       }
     } catch (error) {
       console.log("Full error:", error); // Check console for details
-      
+
       // Improved error handling
       let errorMessage = "Upload failed";
       if (error.response) {
         // Server responded with error status (4xx, 5xx)
-        errorMessage = error.response.data?.error || 
-                      `Server error: ${error.response.status}`;
+        errorMessage = error.response.data?.error ||
+          `Server error: ${error.response.status}`;
       } else if (error.request) {
         // Request was made but no response received
         errorMessage = "No response from server (CORS or network issue)";
@@ -407,7 +407,7 @@ const UploadApi = () => {
         // Other errors
         errorMessage = error.message;
       }
-      
+
       setUploadStatus(`❌ ${errorMessage}`);
     } finally {
       setIsUploading(false);
@@ -417,6 +417,7 @@ const UploadApi = () => {
   const handleClose = () => {
     setOpen(false);
     window.history.back();
+    window.location.reload();
   };
 
   return (
@@ -436,9 +437,9 @@ const UploadApi = () => {
         outline: 'none'
       }}>
         <Typography variant="h6" sx={{ mb: 3 }}>Upload API File</Typography>
-        
+
         {/* File Upload Area */}
-        <Box 
+        <Box
           sx={{
             border: '2px dashed #90caf9',
             p: 4,
@@ -467,7 +468,7 @@ const UploadApi = () => {
 
         {/* Selected file name */}
         {fileName && (
-          <Typography variant="body2" sx={{ 
+          <Typography variant="body2" sx={{
             mt: 1,
             p: 1,
             backgroundColor: '#f5f5f5',
@@ -480,9 +481,9 @@ const UploadApi = () => {
 
         {/* Upload Status */}
         {uploadStatus && (
-          <Typography 
-            variant="body2" 
-            sx={{ 
+          <Typography
+            variant="body2"
+            sx={{
               mt: 2,
               fontWeight: 'medium',
               color: uploadStatus.includes("✅") ? 'success.main' : 'error.main',
