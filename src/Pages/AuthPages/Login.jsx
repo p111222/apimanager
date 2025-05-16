@@ -4,6 +4,7 @@ import keycloak, { initializeKeycloak } from "./keycloak";
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
 import { AuthContext } from "../../Context/AuthContext";
 import { Box, CircularProgress } from "@mui/material";
+import Loader from '../../Assets/apidocumentationloader.gif';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -72,8 +73,17 @@ const Login = () => {
   }, [navigate, setAccessToken, setSessionValidity, setUser]);
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <CircularProgress />
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+      {/* <CircularProgress /> */}
+      <img 
+        src={Loader} 
+        alt="Loading..." 
+        style={{ 
+          width: '150px', // Adjust size as needed
+          height: '150px' // Adjust size as needed
+        }} 
+      />
+
     </Box>
   );
 };

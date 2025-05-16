@@ -21,6 +21,7 @@ import useAxiosPrivate from '../Hooks/useAxiosPrivate';
 import { AuthContext } from '../Context/AuthContext';
 import debounce from 'lodash.debounce';
 import CircularProgress from '@mui/material/CircularProgress';
+import Loader from '../Assets/apidocumentationloader.gif'
 
 const drawerWidth = 260;
 
@@ -365,8 +366,20 @@ const ApiLayout = () => {
   };
 
   if (apiDataLoading || loading) return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <CircularProgress />
+    // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    //   <CircularProgress />
+    // </Box>
+
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+      <img
+        src={Loader}
+        alt="Loading..."
+        style={{
+          width: '150px', // Adjust size as needed
+          height: '150px' // Adjust size as needed
+        }}
+      />
+
     </Box>
   );
 
