@@ -21,7 +21,9 @@ import useAxiosPrivate from '../Hooks/useAxiosPrivate';
 import { AuthContext } from '../Context/AuthContext';
 import debounce from 'lodash.debounce';
 import CircularProgress from '@mui/material/CircularProgress';
-import Loader from '../Assets/apidocumentationloader.gif'
+import Loader from '../Assets/loader2.gif'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 const drawerWidth = 260;
 
@@ -370,17 +372,25 @@ const ApiLayout = () => {
     //   <CircularProgress />
     // </Box>
 
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
-      <img
-        src={Loader}
-        alt="Loading..."
-        style={{
-          width: '150px', // Adjust size as needed
-          height: '150px' // Adjust size as needed
-        }}
-      />
+    // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+    //   <img
+    //     src={Loader}
+    //     alt="Loading..."
+    //     style={{
+    //       width: '250px', 
+    //       height: '250px' 
+    //     }}
+    //   />
 
-    </Box>
+    // </Box>
+    <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+      <DotLottieReact
+        src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
+        className="w-[150px] h-[150px]" 
+        loop
+        autoplay
+      />
+    </div>
   );
 
   if (apiDataError) return <div>Error fetching data: {apiDataError.message}</div>;

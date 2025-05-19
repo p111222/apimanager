@@ -292,6 +292,9 @@ import {
   Collapse
 } from "@mui/material";
 import { Check, Close, Info } from "@mui/icons-material";
+import Loader from '../../Assets/loader2.gif';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 const UploadApi = () => {
   const [fileName, setFileName] = useState("");
@@ -543,7 +546,26 @@ const UploadApi = () => {
           >
             {isUploading ? (
               <>
-                <CircularProgress size={24} sx={{ color: 'white', mr: 1 }} />
+                {/* <CircularProgress size={24} sx={{ color: 'white', mr: 1 }} /> */}
+                {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+                  <img
+                    src={Loader}
+                    alt="Loading..."
+                    style={{
+                      width: '250px',
+                      height: '250px'
+                    }}
+                  />
+
+                </Box> */}
+                <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+                  <DotLottieReact
+                    src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
+                    className="w-[150px] h-[150px]"
+                    loop
+                    autoplay
+                  />
+                </div>
                 Uploading...
               </>
             ) : 'Upload'}

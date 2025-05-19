@@ -308,6 +308,9 @@ import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Context/AuthContext';
 import CircularProgress from '@mui/material/CircularProgress';
+import Loader from '../../Assets/loader2.gif';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 const ApiDashboard = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -361,9 +364,29 @@ const ApiDashboard = () => {
   const getInitial = (name) => name.charAt(0).toUpperCase();
 
   if (isLoading || categoryLoading) return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <CircularProgress />
-    </Box>
+    // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    //   <CircularProgress />
+    // </Box>
+
+    // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+    //   <img
+    //     src={Loader}
+    //     alt="Loading..."
+    //     style={{
+    //       width: '250px',
+    //       height: '250px'
+    //     }}
+    //   />
+
+    // </Box>
+    <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+      <DotLottieReact
+        src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
+        className="w-[150px] h-[150px]"
+        loop
+        autoplay
+      />
+    </div>
   );
 
   if (error) return <div>Error fetching APIs: {error.message}</div>;
@@ -394,11 +417,11 @@ const ApiDashboard = () => {
                 cursor: 'pointer',
               }}
             >
-              <Avatar sx={{ 
-                bgcolor: 'orange', 
-                width: 60, 
-                height: 60, 
-                mx: 'auto', 
+              <Avatar sx={{
+                bgcolor: 'orange',
+                width: 60,
+                height: 60,
+                mx: 'auto',
                 mb: 2,
                 fontSize: '1.5rem',
                 fontWeight: 'bold'
@@ -407,11 +430,11 @@ const ApiDashboard = () => {
               </Avatar>
               <CardContent>
                 <Tooltip title={api.name} placement="top" arrow>
-                  <Typography 
+                  <Typography
                     // variant="h6" 
-                    sx={{ 
+                    sx={{
                       fontSize: '20px',
-                      fontWeight: 'semibold', 
+                      fontWeight: 'semibold',
                       color: '#222',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
@@ -423,35 +446,35 @@ const ApiDashboard = () => {
                     {api.name}
                   </Typography>
                 </Tooltip>
-                
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: 'center', 
+
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
                   gap: 1,
                   mb: 1
                 }}>
-                  <Chip 
+                  <Chip
                     label={`v${api.version}`}
                     size="small"
-                    sx={{ 
+                    sx={{
                       backgroundColor: '#e3f2fd',
                       color: '#1976d2',
                       fontWeight: 'bold'
                     }}
                   />
-                  <Chip 
+                  <Chip
                     label={api.provider}
                     size="small"
-                    sx={{ 
+                    sx={{
                       backgroundColor: '#e8f5e9',
                       color: '#2e7d32',
                       fontWeight: 'bold'
                     }}
                   />
                 </Box>
-                
-                <Typography 
-                  variant="body2" 
+
+                <Typography
+                  variant="body2"
                   color="text.secondary"
                   sx={{
                     fontStyle: 'italic',
@@ -494,11 +517,11 @@ const ApiDashboard = () => {
               </Avatar>
               <CardContent>
                 <Tooltip title={category.name} placement="top" arrow>
-                  <Typography 
+                  <Typography
                     // variant="h6" 
-                    sx={{ 
+                    sx={{
                       fontSize: '20px',
-                      fontWeight: 'semibold', 
+                      fontWeight: 'semibold',
                       color: '#222',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',

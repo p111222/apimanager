@@ -288,6 +288,9 @@ import Info from '@mui/icons-material/Info';
 import { Security, Public, DirectionsCar, ExpandMore, ExpandLess } from '@mui/icons-material';
 import useAxiosPrivate from '../../Hooks/useAxiosPrivate';
 import BreadcrumbComponent from '../../Components/BreadcrumbComponent';
+import Loader from '../../Assets/loader2.gif';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 const CategoryDetailsPage = () => {
     const { categoryName } = useParams();
@@ -446,9 +449,30 @@ const CategoryDetailsPage = () => {
     };
 
     if (loading) return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress />
-        </Box>
+        // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        //     <CircularProgress />
+        // </Box>
+
+        // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+        //     <img
+        //         src={Loader}
+        //         alt="Loading..."
+        //         style={{
+        //             width: '250px',
+        //             height: '250px'
+        //         }}
+        //     />
+
+        // </Box>
+
+        <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+            <DotLottieReact
+                src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
+                className="w-[150px] h-[150px]"
+                loop
+                autoplay
+            />
+        </div>
     );
 
     return (

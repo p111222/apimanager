@@ -1097,7 +1097,10 @@ import Alert from '@mui/material/Alert';
 import ApiView from './ApiView';
 import { ApiEndpointContext } from '../../Context/ApiEndpointContext';
 import { AuthContext } from '../../Context/AuthContext';
+import Loader from '../../Assets/loader2.gif';
 import BreadcrumbComponent from '../../Components/BreadcrumbComponent';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 const ApiDetailsPage = () => {
     const { user } = useContext(AuthContext);
@@ -1248,9 +1251,30 @@ const ApiDetailsPage = () => {
     };
 
     if (isLoading) return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress />
-        </Box>
+        // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        //     <CircularProgress />
+        // </Box>
+
+        // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+        //     <img
+        //         src={Loader}
+        //         alt="Loading..."
+        //         style={{
+        //             width: '250px',
+        //             height: '250px'
+        //         }}
+        //     />
+
+        // </Box>
+
+        <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+            <DotLottieReact
+                src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
+                className="w-[150px] h-[150px]"
+                loop
+                autoplay
+            />
+        </div>
     );
     if (error) return <div>Error fetching API details: {error.message}</div>;
 
@@ -1262,7 +1286,7 @@ const ApiDetailsPage = () => {
         }}>
             <Box sx={{
                 position: 'sticky',
-                top: 65, 
+                top: 65,
                 zIndex: 600,
                 backgroundColor: '#f8fafc',
                 // pb: 1,

@@ -19,6 +19,9 @@ import { Box } from '@mui/material';
 import InvalidSessionModal from './Components/InvalidSessionModal.jsx';
 import MyProfile from './Pages/CommonPages/MyProfile.jsx';
 import CategoryDetailsPage from './Pages/CommonPages/CategoryDetailsPage.jsx';
+import Loader from './Assets/loader2.gif';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 
 const App = () => {
   const { user, setUser, sessionValidity, setSessionValidity, setAccessToken } = useContext(AuthContext);
@@ -86,9 +89,30 @@ const App = () => {
 
     // Wait for loading to complete before rendering the route
     if (loading) return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <CircularProgress />
-      </Box>
+      // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      //   <CircularProgress />
+      // </Box>
+
+      // <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
+      //   <img
+      //     src={Loader}
+      //     alt="Loading..."
+      //     style={{
+      //       width: '250px',
+      //       height: '250px'
+      //     }}
+      //   />
+      // </Box>
+
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
+        <DotLottieReact
+          src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
+          className="w-[150px] h-[150px]"
+          loop
+          autoplay
+        />
+      </div>
+
     );
 
     // Redirect to login if no user data is available
@@ -129,7 +153,7 @@ const App = () => {
         { path: '/admin/apiview', element: <ApiView /> },
         { path: '/admin/allcategories', element: <ListofCategories /> },
         { path: '/admin/uploadapi', element: <UploadApi /> },
-        // { path: '/admin/createteam', element: <CreateTeam /> },
+        // {path: '/admin/createteam', element: <CreateTeam /> },
         { path: '/admin/api-details/:apiId', element: <ApiDetailsPage /> },
         { path: '/admin/my-profile', element: <MyProfile /> },
         { path: "/admin/category-details/:categoryName", element: <CategoryDetailsPage />, }

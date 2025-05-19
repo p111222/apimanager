@@ -215,7 +215,6 @@ const BreadcrumbComponent = () => {
         return response.data;
     });
 
-
     const pathnames = location.pathname.split("/").filter((x) => x);
     const dashboardPath = user?.roles?.includes("admin") ? "/admin/apidashboard" : "/user/apidashboard";
 
