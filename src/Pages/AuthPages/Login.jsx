@@ -90,7 +90,7 @@ const Login = () => {
     <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
       <DotLottieReact
         src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
-        className="w-[150px] h-[150px]"
+        className="w-[100px] h-[100px]"
         loop
         autoplay
       />
