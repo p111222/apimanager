@@ -372,8 +372,8 @@ const UploadApi = () => {
 
     try {
       const response = await axiosPrivate.post(
-        // "http://127.0.0.1:8000/upload_excel/",
-        "/upload_excel/",
+        "http://127.0.0.1:8000/upload_excel/",
+        // "/upload_excel/",
         formData,
         {
           headers: {
@@ -546,26 +546,7 @@ const UploadApi = () => {
           >
             {isUploading ? (
               <>
-                {/* <CircularProgress size={24} sx={{ color: 'white', mr: 1 }} /> */}
-                {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'background.default' }}>
-                  <img
-                    src={Loader}
-                    alt="Loading..."
-                    style={{
-                      width: '250px',
-                      height: '250px'
-                    }}
-                  />
-
-                </Box> */}
-                <div className="fixed inset-0 flex items-center justify-center bg-white z-50">
-                  <DotLottieReact
-                    src="https://lottie.host/daa52b92-4f61-46f3-b628-4e8763f992f0/uxk1wFWwXN.lottie"
-                    className="w-[150px] h-[150px]"
-                    loop
-                    autoplay
-                  />
-                </div>
+                <CircularProgress size={24} sx={{ color: 'white', mr: 1 }} />
                 Uploading...
               </>
             ) : 'Upload'}
