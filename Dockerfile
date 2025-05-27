@@ -11,5 +11,6 @@ COPY ./build /var/www/html
 
 # Expose port 80 to allow outside access to Nginx
 EXPOSE 80
+
 # Command to start Nginx when the container starts
 CMD ["nginx", "-g", "daemon off;"]
