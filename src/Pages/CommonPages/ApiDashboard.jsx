@@ -322,14 +322,14 @@ const ApiDashboard = () => {
   }, []);
 
   const { data: apiList, isLoading, error } = useQuery('apiList', async () => {
-    const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
-    // const response = await axiosPrivate.get("/getAll");
+    // const response = await axiosPrivate.get("http://localhost:8082/api/getAll");
+    const response = await axiosPrivate.get("/getAll");
     const apis = response.data.list;
     // Fetch additional details for each API
     const apisWithDetails = await Promise.all(apis.map(async api => {
       try {
-        const detailsResponse = await axiosPrivate.get(`http://localhost:8081/api/getapi/${api.id}`);
-        // const detailsResponse = await axiosPrivate.get(`/getapi/${api.id}`);
+        // const detailsResponse = await axiosPrivate.get(`http://localhost:8081/api/getapi/${api.id}`);
+        const detailsResponse = await axiosPrivate.get(`/getapi/${api.id}`);
         return {
           ...api,
           provider: detailsResponse.data.provider,
@@ -347,8 +347,8 @@ const ApiDashboard = () => {
   });
 
   const { data: categories, isLoading: categoryLoading, error: categoryError } = useQuery('categories', async () => {
-    const response = await axiosPrivate.get("http://localhost:8086/api/categories");
-    // const response = await axiosPrivate.get("/categories");
+    // const response = await axiosPrivate.get("http://localhost:8086/api/categories");
+    const response = await axiosPrivate.get("/categories");
     return response.data.list;
   });
 
